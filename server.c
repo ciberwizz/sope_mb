@@ -9,6 +9,10 @@ void depositarDinheiro(unsigned int numconta,char pinconta[4],int valor);
 void transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numconta2,int valor);
 void escreveAcounts(Cliente a);
 
+//TODO logfiles
+
+//TODO threads
+
 
 int main() {
 
