@@ -10,6 +10,7 @@ int main() {
 
 	pid_t pid = getpid();
 	char spid[11];
+	char *buff;
 
 	sprintf(spid,"ans%ld",(long int) pid);
 	if( createFifo(spid) != 0) {
@@ -18,6 +19,13 @@ int main() {
 	}
 
 	interface();
+
+	writeFifo(spid, "fuuuuuuu");
+	buff = readFifo(spid,3);
+	if(buff != NULL)
+		printf("%s\n",buff);
+	else
+		puts("timeout");
 
 	remove(spid);
 	return 0;

@@ -197,7 +197,7 @@ int writeFifo(char* path, char* buff){
 
 	while( (wr=write(fifo, buff, len)) == -1);
 
-
+	close(fifo);
 	return wr;
 }
 
