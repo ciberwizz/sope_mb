@@ -154,3 +154,54 @@ char * clienteToString(Cliente* cliente){
 
 }
 
+
+int createFifo(char* ff){
+	// S_IRWXU | S_IRWXO = dar todas as permissoes ao ficheiro
+	return mkfifo(ff, S_IRWXU | S_IRWXO);
+
+}
+
+char* readFifo(char* path, int timeout){
+	int fifo = open(path, O_RDONLY | O_NONBLOCK);
+	char *buff = (char*) malloc(sizeof(char)*1000);
+	int start = time(NULL), end = 0;
+
+	if(timeout == 0)
+		timeout = -1;
+
+	//erro
+	if( fifo == -1)
+		return NULL;
+
+	while( (end - start) != timeout){
+		if(read(fifo, buff, 1000) > 0 )
+			break;
+
+		//sleep for 250 ms
+		usleep(250 * 1000);
+
+		end = time(NULL);
+	}
+
+	close(fifo);
+
+	if( end-start == 0)
+		return NULL;
+	else return buff;
+}
+
+int writeFifo(char* path, char* buff){
+
+	int fifo = open(path, O_WRONLY | O_NONBLOCK);
+
+	int len = strlen(buff);
+
+	int wr;
+
+	while( (wr=write(fifo, buff, len)) == -1);
+
+	close(fifo);
+	return wr;
+}
+
+
