@@ -16,6 +16,25 @@ void escreveAcounts(Cliente a);
 
 int main() {
 
+    char * a;
+    Cliente cliente;
+    strcpy(cliente.nome,"nelson");
+    cliente.numconta = 5577756;
+    printf("cliente numconta: %u\n",cliente.numconta);
+    strcpy(cliente.pin,"1234");
+    cliente.saldo = 123432345;
+    a = clienteToString(&cliente);
+    printf(a);
+    free(a);
+    printf("\nlast cliente numconta: %u\n",cliente.numconta);
+    a = clienteToString(&cliente);
+    printf("last cliente numconta: %u\n",cliente.numconta);
+    printf(a);
+    free(a);
+    a = clienteToString(&cliente);
+    printf("last cliente numconta: %u\n",cliente.numconta);
+    printf(a);
+    free(a);
     return 0;
 }
 

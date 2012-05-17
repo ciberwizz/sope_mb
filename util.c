@@ -97,7 +97,7 @@ unsigned int removeCliente(unsigned int numconta,ListaCliente* lista){
 
 ListaCliente * searchCliente(unsigned int numconta,ListaCliente* lista){
 
-    ListaCliente* listaclient;
+    //ListaCliente* listaclient;
 
     while(lista->cliente.numconta != numconta)
     {
@@ -126,8 +126,25 @@ ListaCliente * searchCliente(unsigned int numconta,ListaCliente* lista){
 }
 
 //transforma os dados do cliente numa string
-char * clienteToString(Cliente cliente){
+char * clienteToString(Cliente* cliente){
 
+    char nconta[8];
+    char* str = (char *) malloc( sizeof(char)*100  );
+    if(str == NULL) {
+        puts("STR = NULL");
+        return NULL;
+    }
+
+
+    printf("antes: %07u\n",cliente->numconta);
+    sprintf (nconta,"%07u", cliente->numconta);
+    printf("depois: %s\n",nconta);
+
+    //sprintf(str,"%s %s     %s     %d",nconta,"nel","1234",12345);
+    sprintf(str,"%s %s     %s     %d",nconta,cliente->nome,cliente->pin,cliente->saldo);
+
+    cliente->numconta =12345;
+    return str;
 
 
 

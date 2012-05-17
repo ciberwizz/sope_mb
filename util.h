@@ -17,7 +17,7 @@ typedef struct ListaCliente ListaCliente;//mudar tudo nos outros files de Client
 
 struct Cliente{
 	char nome[20];
-	char pin[4];
+	char pin[5];
 	unsigned int numconta;
 	int saldo;
 
@@ -46,7 +46,7 @@ unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista,unsigned i
 unsigned int removeCliente(unsigned int numconta,ListaCliente* lista);
 
 //transofrma os dados do cliente numa string
-char * clienteToString(Cliente cliente);
+char * clienteToString(Cliente* cliente);
 
 
 //retorna a lista onde um determinado cliente se encontra, else retorna null
