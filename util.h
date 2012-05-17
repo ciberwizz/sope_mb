@@ -6,7 +6,11 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
-
+#include <time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 //TODO diferenciar cliente e lista de cliente
 typedef struct Cliente Cliente;
@@ -54,9 +58,8 @@ ListaCliente * searchCliente(unsigned int numconta,ListaCliente* lista);
 
 //TODO operacoes com fifos
 int createFifo(char*);
-int removeFifo(char*);
-int readFifo(char*);
-int writeFifo(char*);
+char* readFifo(char*, int);
+int writeFifo(char*, char*);
 
 
 #endif // UTIL_H_INCLUDED
