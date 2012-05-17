@@ -38,6 +38,9 @@ unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista,unsigned i
     ListaCliente* listaNova = (ListaCliente*) malloc(sizeof(ListaCliente));
     novoCliente = &(listaNova->cliente);//e como se fosse um atalho, qualquer alteracao a novoCliente afecta o cliente de listaNova
 
+    if(ultimoNumconta >= 10 000 000)
+        return 0;
+
     while(lista != NULL)
     {
         if(lista->next == NULL)

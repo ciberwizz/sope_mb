@@ -16,6 +16,8 @@ void escreveAcounts(Cliente a);
 
 int main() {
 
+    //teste do toString
+    /*
     char * a;
     Cliente cliente;
     strcpy(cliente.nome,"nelson");
@@ -35,6 +37,68 @@ int main() {
     printf("last cliente numconta: %u\n",cliente.numconta);
     printf(a);
     free(a);
+    */
+
+    // teste do login
+    /*Cliente a;
+    strcpy(a.nome,"nelson");
+    a.numconta = 1;
+    strcpy(a.pin,"1234");
+    a.saldo = 123432345;
+
+    Cliente b;
+    strcpy(b.nome,"Manuel");
+    a.numconta = 2;
+    strcpy(b.pin,"1111");
+    b.saldo = 1111111111;
+
+    Cliente c;
+    strcpy(c.nome,"Carla");
+    a.numconta = 3;
+    strcpy(c.pin,"2222");
+    c.saldo = 2222222222;
+
+    ListaCliente* listaA;
+    listaA->cliente = a;
+    listaA->pid = 0;
+
+    ListaCliente* listaB;
+    listaB->cliente = b;
+    listaB->pid = 0;
+
+    ListaCliente* listaC;
+    listaC->cliente = c;
+    listaC->pid = 0;
+
+    listaA->prev = NULL;
+    listaA->next = listaB;
+    listaB->prev = listaA;
+    listaB->next = listaC;
+    listaC->prev = listaB;
+    listaC->next = NULL;
+
+    login(3,"2222",listaA);
+    */
+
+
+    //teste ao addCliente
+
+    unsigned int ultimoNumconta = 0;
+
+    ListaCliente lista;
+    lista.cliente.nome admin //usar string copy
+    lista.cliente.numconta 0
+    lista.nexxt e prev = NULL
+
+    unsigned int result;
+
+    result = addCliente("nelson","1234",&lista,ultimoNumconta);
+
+    if(result == 0)
+        printf("Nao adicionou cliente\n");
+
+    printf("Cliente adicionado com num conta: %u\n", result);
+
     return 0;
 }
 
