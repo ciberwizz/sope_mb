@@ -16,10 +16,10 @@ void escreveAcounts(Cliente a);
 
 int main() {
 
-
+    return 0;
 }
 
-
+/*
 
 void levantarDinheiro(unsigned int numconta,char pinconta[4], int valor){
 
@@ -100,12 +100,12 @@ void escreveAcounts(Cliente a){
 
 	if ( (file = fopen ( "accounts.txt", "r" ) ) != NULL )
 	{
-		fclose ( file );
+
 	}
 	else {
 
 		file = fopen("accounts.txt", "a+");//se nao existir cria e abre para escrita modo append
-		fclose(file);
+
 	}
 
 	//acho que se tem de usar fprintf e nao fputs
@@ -116,4 +116,4 @@ void escreveAcounts(Cliente a){
 
 }
 
-
+*/

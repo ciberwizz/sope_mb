@@ -5,7 +5,7 @@ void interface();
 
 int main() {
 
-
+    return 0;
 
 }
 
