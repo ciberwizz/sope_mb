@@ -38,7 +38,7 @@ unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista,unsigned i
     ListaCliente* listaNova = (ListaCliente*) malloc(sizeof(ListaCliente));
     novoCliente = &(listaNova->cliente);//e como se fosse um atalho, qualquer alteracao a novoCliente afecta o cliente de listaNova
 
-    if(ultimoNumconta >= 10 000 000)
+    if(ultimoNumconta >= 10000000)
         return 0;
 
     while(lista != NULL)
@@ -155,50 +155,74 @@ char * clienteToString(Cliente* cliente){
 }
 
 
-int createFifo(char* ff){
-	// S_IRWXU | S_IRWXO = dar todas as permissoes ao ficheiro
-	return mkfifo(ff, S_IRWXU | S_IRWXO);
-
+void sigpipe_handler(int signo){
+	printf("SIGPIPE COUGHT\n");
 }
 
-char* readFifo(char* path, int timeout){
-	int fifo = open(path, O_RDONLY | O_NONBLOCK);
-	char *buff = (char*) malloc(sizeof(char)*1000);
-	int start = time(NULL), end = 0;
 
-	if(timeout == 0)
-		timeout = -1;
+int createFifo(char* ff){
+	int ret;
+	// S_IRWXU | S_IRWXO = dar todas as permissoes ao ficheiro
+	ret = mkfifo(ff, S_IRWXU | S_IRWXO);
+//	signal(SIGPIPE, sigpipe_handler);
+
+	if(ret < 0){
+		remove(ff);
+		return createFifo(ff);
+	}
+
+
+	return ret;
+}
+
+char* readFifo(char* path, int timeout, char* buff){
+	int fifo = open(path, O_RDWR );
+	int ret, start,end=0;
+
+	start = time(NULL);
 
 	//erro
 	if( fifo == -1)
 		return NULL;
 
-	while( (end - start) != timeout){
-		if(read(fifo, buff, 1000) > 0 )
-			break;
-
-		//sleep for 250 ms
-		usleep(250 * 1000);
-
+	do{
+		ret = read(fifo, buff, 16);
+		if(ret==-1)
+			usleep(1 * 1000);
 		end = time(NULL);
-	}
+	}while(ret == -1 && (end - start) != timeout );
+	printf("ret=%d\n", ret);
+
 
 	close(fifo);
 
-	if( end-start == 0)
+	if(ret < 0) {
+		//if( errno != EINTR)
+			printf("ERRRROOOO %s",strerror(errno));
+
 		return NULL;
-	else return buff;
+	}
+
+	//printf("%u stop alarm\n",alarm(0));
+	//wait();
+
+	return buff;
 }
 
 int writeFifo(char* path, char* buff){
 
-	int fifo = open(path, O_WRONLY | O_NONBLOCK);
+	int fifo = open(path, O_RDWR | O_APPEND );
 
 	int len = strlen(buff);
 
 	int wr;
+	printf("fifo erro: %s\n",strerror(errno));
+	printf("fifo = %d; path = %s\n",fifo, path);
 
-	while( (wr=write(fifo, buff, len)) == -1);
+	while( (wr=write(fifo, buff, len)) == -1){
+		printf("erro: %s\n",strerror(errno));
+		usleep(250 * 1000);
+	}
 
 	close(fifo);
 	return wr;

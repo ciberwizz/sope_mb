@@ -11,6 +11,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <errno.h>
+#include <signal.h>
 
 //TODO diferenciar cliente e lista de cliente
 typedef struct Cliente Cliente;
@@ -58,8 +60,8 @@ ListaCliente * searchCliente(unsigned int numconta,ListaCliente* lista);
 
 //TODO operacoes com fifos
 int createFifo(char*);
-char* readFifo(char*, int);
+char* readFifo(char*, int, char*);
 int writeFifo(char*, char*);
-
+void sigpipe_handler(int signo);
 
 #endif // UTIL_H_INCLUDED

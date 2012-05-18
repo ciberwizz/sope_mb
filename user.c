@@ -10,24 +10,27 @@ int main() {
 
 	pid_t pid = getpid();
 	char spid[11];
-	char *buff;
+	char buff[1024];
+	int i=0;
 
-	sprintf(spid,"ans%ld",(long int) pid);
-	if( createFifo(spid) != 0) {
+	sprintf(spid,"ans%ld",(long int) 1234);//pid);
+/*	if( createFifo(spid) != 0) {
 		printf("\nimpossivel criar FIFO.\n");
-		return 1;
+//		return 1;
 	}
+*/
+//	interface();
 
-	interface();
+//	writeFifo(spid, "fuuuuuuu");
+	while( readFifo(spid,3,buff) != NULL)
+		printf("%04d==> %s\n",i++,buff);
 
-	writeFifo(spid, "fuuuuuuu");
-	buff = readFifo(spid,3);
 	if(buff != NULL)
-		printf("%s\n",buff);
-	else
+		printf("final: %s\n",buff);
+	//else
 		puts("timeout");
 
-	remove(spid);
+	//remove(spid);
 	return 0;
 }
 
