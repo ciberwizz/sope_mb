@@ -83,6 +83,7 @@ int main() {
 
     //teste ao addCliente
 
+    /*
     unsigned int ultimoNumconta = 0;
 
     ListaCliente lista;
@@ -103,6 +104,7 @@ int main() {
 
     printf("listanext nome: %s\n pin: %s\n",lista.next->cliente.nome,lista.next->cliente.pin);
     printf("numconta: %u\n",lista.next->cliente.numconta);
+    */
 
     //teste ao remover o cliente
 
@@ -144,12 +146,47 @@ int main() {
     if(!strcmp(clienteresult->pin,"1234"))
       printf("Com login");
     */
+
+    //testar listarClientes
+    ListaCliente lista;
+    ListaCliente * ini;
+    createListclient(&lista);
+    char str[128];
+    //unsigned int ultimoNumconta = 0;//vai ser para utilizar um static int e actaulizar de cada vez que se adiociona um cliente
+
+
+    addCliente("nelson","1234",&lista/*,ultimoNumconta*/);
+    addCliente("Miguel","5678",&lista/*,ultimoNumconta*/);
+    addCliente("Da","1656",&lista/*,ultimoNumconta*/);
+    addCliente("Costa","2465",&lista/*,ultimoNumconta*/);
+    addCliente("Martins","8714",&lista/*,ultimoNumconta*/);
+    addCliente("Pereira","9832",&lista/*,ultimoNumconta*/);
+    addCliente("Miguel","4164",&lista/*,ultimoNumconta*/);
+    addCliente("Marcos","9165",&lista/*,ultimoNumconta*/);
+    addCliente("Juliana","6519",&lista/*,ultimoNumconta*/);
+    addCliente("Joao","9720",&lista/*,ultimoNumconta*/);
+    addCliente("Joana","1642",&lista/*,ultimoNumconta*/);
+
+
+    ini = &lista;
+
+    while(ini != NULL)
+    {
+        ini = listarClientes(ini,str);
+        printf("String :%s\n",str);
+
+    }
+
     return 0;
 }
 
 /*
 
-void levantarDinheiro(unsigned int numconta,char pinconta[4], int valor){
+
+//verificar se existe saldo suficiente
+//verificar o login
+//retirar o valor e fazer return true
+bool levantarDinheiro(unsigned int numconta,char pinconta[4], int valor){
 
     Clinte *utilizador;
     utilizador = ini;
@@ -168,7 +205,9 @@ void levantarDinheiro(unsigned int numconta,char pinconta[4], int valor){
 
 
 
-void depositarDinheiro(unsigned int numconta,char pinconta[4],int valor){
+//verificar o login
+//retirar o valor e fazer return true
+bool depositarDinheiro(unsigned int numconta,char pinconta[4],int valor){
 
     Clinte *utilizador;
     utilizador = ini;
@@ -186,8 +225,10 @@ void depositarDinheiro(unsigned int numconta,char pinconta[4],int valor){
 }
 
 
-
-void transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numconta2,int valor){
+//verificar login conta1
+//verificar se existe saldo suf na conta1
+//retirar o valor da conta1 e meter na 2
+bool transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numconta2,int valor){
     Clinte *utilizador;
     utilizador = ini;
 
