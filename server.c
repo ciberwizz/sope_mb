@@ -86,11 +86,13 @@ int main() {
     unsigned int ultimoNumconta = 0;
 
     ListaCliente lista;
-    lista.cliente.nome admin //usar string copy
-    lista.cliente.numconta 0
-    lista.nexxt e prev = NULL
+    //strcpy(lista.cliente.nome,admin);
+    //lista.cliente.numconta = 0
+    lista.next = NULL;
+    lista.prev = NULL;
 
     unsigned int result;
+    unsigned int result2;
 
     result = addCliente("nelson","1234",&lista,ultimoNumconta);
 
@@ -99,6 +101,49 @@ int main() {
 
     printf("Cliente adicionado com num conta: %u\n", result);
 
+    printf("listanext nome: %s\n pin: %s\n",lista.next->cliente.nome,lista.next->cliente.pin);
+    printf("numconta: %u\n",lista.next->cliente.numconta);
+
+    //teste ao remover o cliente
+
+    /*
+    result2 = removeCliente(1,&lista);
+
+    if(result2 == 0)
+        printf("Cliente nao foi removido\n");
+
+    printf("cliente removido\n");
+    */
+
+    //teste searchcliente
+
+    /*
+    ListaCliente* listaresult;
+    listaresult =  searchCliente(2,&lista);
+    if(listaresult ==NULL)
+    {
+        printf("lista nao encontrada\n");
+    }else
+        if(listaresult == lista.next)
+            printf("lista econtrada\n");
+
+    */
+
+    //testar login
+
+    /*
+    Cliente * clienteresult;
+    clienteresult = login(1,"1234",&lista);
+    //printf("pinResult: %s, cmp = %d\n",clienteresult->pin,strcmp(clienteresult->pin,"1234"));
+    if(clienteresult == NULL)
+    {
+
+          printf("Cliente nao existe\n");
+    }else
+
+    if(!strcmp(clienteresult->pin,"1234"))
+      printf("Com login");
+    */
     return 0;
 }
 

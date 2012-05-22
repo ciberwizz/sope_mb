@@ -38,9 +38,6 @@ unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista,unsigned i
     ListaCliente* listaNova = (ListaCliente*) malloc(sizeof(ListaCliente));
     novoCliente = &(listaNova->cliente);//e como se fosse um atalho, qualquer alteracao a novoCliente afecta o cliente de listaNova
 
-    if(ultimoNumconta >= 10000000)
-        return 0;
-
     while(lista != NULL)
     {
         if(lista->next == NULL)
@@ -72,7 +69,6 @@ unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista,unsigned i
 }
 
 unsigned int removeCliente(unsigned int numconta,ListaCliente* lista){
-
     while(lista->cliente.numconta != numconta)
     {
 
@@ -84,13 +80,16 @@ unsigned int removeCliente(unsigned int numconta,ListaCliente* lista){
         }
     }
 
-    if(lista == NULL)
+
+    if(lista->cliente.numconta != numconta)
     {
         return 0;
     }else {
 
         lista->prev->next = lista->next;
-        lista->next->prev = lista->prev;
+        if(lista->next != NULL)
+            lista->next->prev = lista->prev;
+
         free(lista);
 
         return numconta;
