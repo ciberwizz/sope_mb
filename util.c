@@ -32,27 +32,37 @@ Cliente *  login(unsigned int numconta,char pin[4],ListaCliente* lista){
 }
 
 
-unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista,unsigned int ultimoNumconta){
-
+unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista/*,unsigned int ultimoNumconta*/){
+    //aqui
+    ultimoNumconta = ultimoNumconta + 1;
+    //end aqui
     Cliente *novoCliente;
     ListaCliente* listaNova = (ListaCliente*) malloc(sizeof(ListaCliente));
     novoCliente = &(listaNova->cliente);//e como se fosse um atalho, qualquer alteracao a novoCliente afecta o cliente de listaNova
 
-    if(ultimoNumconta >= 10000000)
-        return 0;
 
     while(lista != NULL)
     {
         if(lista->next == NULL)
+        {
             break;
+        }
 
-        lista = lista->next;
+        if(lista->next !=NULL)
+        {
+            lista = lista->next;
+        }
+
     }
-
 
     strcpy (novoCliente->nome,nome);
     //novoCliente->nome = nome;
-    novoCliente->numconta = ultimoNumconta+1;
+
+    //aqui
+    //novoCliente->numconta = ultimoNumconta+1;
+    novoCliente->numconta = ultimoNumconta;
+    //end aqui
+
     strcpy (novoCliente->pin,pin);
     //novoCliente->pin = pin;
     novoCliente->saldo = 0;
@@ -62,9 +72,10 @@ unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista,unsigned i
     listaNova->pid = 0;
     listaNova->prev = lista;
 
+
     lista->next = listaNova;
 
-
+    printf("novoCliente->numconta: %u\n", novoCliente->numconta);
 
     return novoCliente->numconta;
 
@@ -72,7 +83,6 @@ unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista,unsigned i
 }
 
 unsigned int removeCliente(unsigned int numconta,ListaCliente* lista){
-
     while(lista->cliente.numconta != numconta)
     {
 
@@ -84,20 +94,33 @@ unsigned int removeCliente(unsigned int numconta,ListaCliente* lista){
         }
     }
 
-    if(lista == NULL)
+
+    if(lista->cliente.numconta != numconta)
     {
         return 0;
     }else {
 
         lista->prev->next = lista->next;
-        lista->next->prev = lista->prev;
+        if(lista->next != NULL)
+            lista->next->prev = lista->prev;
+
         free(lista);
 
         return numconta;
     }
 }
 
+/*
 
+
+lclient = searchCliente(30,&lista);
+
+searchcliente(1,lclient);
+
+
+
+
+*/
 ListaCliente * searchCliente(unsigned int numconta,ListaCliente* lista){
 
     //ListaCliente* listaclient;
@@ -139,9 +162,9 @@ char * clienteToString(Cliente* cliente){
     }
 
 
-    printf("antes: %07u\n",cliente->numconta);
+    //printf("antes: %07u\n",cliente->numconta);
     sprintf (nconta,"%07u", cliente->numconta);
-    printf("depois: %s\n",nconta);
+    //printf("depois: %s\n",nconta);
 
     //sprintf(str,"%s %s     %s     %d",nconta,"nel","1234",12345);
     sprintf(str,"%s %s     %s     %d",nconta,cliente->nome,cliente->pin,cliente->saldo);
@@ -153,6 +176,53 @@ char * clienteToString(Cliente* cliente){
 
 
 }
+
+//listar todos os clientes e ir devolvendo strings obtidas pelos tostrings de cada cliente, a cada iteracao a listaCliente e actualizada
+ListaCliente * listarClientes(ListaCliente * lista,char* str){
+
+    //abrir o fifo
+    //int resultOpen;
+    //O_WRONLY
+
+    //resultOpen = open (const char *filename, int mode [, int permissions]);
+
+    //usar a tostring
+    //ListaCliente* listaResult;
+
+    if(lista == NULL)
+    {
+        return NULL;
+    }else
+
+    {
+        //listaResult = lista;
+        //printf("hello\n");
+        strcpy(str,clienteToString(&(lista->cliente)));
+        lista = lista->next;
+        return lista;
+    }
+
+
+
+
+}
+
+//criar lista e o admin com numconta = 0
+int createListclient(ListaCliente * lista){
+
+    ultimoNumconta = 0;
+
+    lista->cliente.numconta = ultimoNumconta;
+    lista->cliente.saldo = 0;
+    strcpy(lista->cliente.nome,"admin");
+    strcpy(lista->cliente.pin,"1234");
+
+    lista->prev = NULL;
+    lista->next = NULL;
+
+    return ultimoNumconta;
+}
+
 
 
 void sigpipe_handler(int signo){
