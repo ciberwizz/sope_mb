@@ -27,6 +27,9 @@ struct Cliente{
 	char pin[5];
 	unsigned int numconta;
 	int saldo;
+	//aqui
+	bool logado = false;
+	//end aqui
 
 };
 
@@ -63,6 +66,11 @@ ListaCliente * listarClientes(ListaCliente * lista,char* str);
 
 //criar lista e o admin com numconta = 0
 int createListclient(ListaCliente *);
+
+bool levantarDinheiro(unsigned int numconta/*,char pinconta[4]*/,int valor,ListaCliente* lista);
+bool depositarDinheiro(unsigned int numconta/*,char pinconta[4]*/,int valor,ListaCliente* lista);
+bool transferirDinheiro(unsigned int numconta/*,char pinconta[4]*/,unsigned int numconta2,int valor,ListaCliente* lista);
+bool escreveAcounts(Cliente a);
 
 //TODO operacoes com fifos
 int createFifo(char*);
