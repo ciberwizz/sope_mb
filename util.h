@@ -28,7 +28,7 @@ struct Cliente{
 	unsigned int numconta;
 	int saldo;
 	//aqui
-	bool logado = false;
+	bool logado;
 	//end aqui
 
 };

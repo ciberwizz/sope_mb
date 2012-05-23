@@ -151,11 +151,19 @@ int main() {
       printf("Com login");
     */
 
-    //testar listarClientes
+    //testar listarClientes depositar dinheiro
     ListaCliente lista;
+    ListaCliente *inicio;
     ListaCliente * ini;
+    ListaCliente * levantar;
+    ListaCliente * transferir;
     createListclient(&lista);
     char str[128];
+    bool depositou;
+    bool levantou;
+    bool transferiu;
+    Cliente * clienteA;
+    Cliente * clienteB;
     //unsigned int ultimoNumconta = 0;//vai ser para utilizar um static int e actaulizar de cada vez que se adiociona um cliente
 
 
@@ -172,11 +180,92 @@ int main() {
     addCliente("Joana","1642",&lista/*,ultimoNumconta*/);
 
 
+    inicio = &lista;
     ini = &lista;
+    levantar = &lista;
+    transferir = &lista;
 
+    printf("listar clientes antes\n");
     while(ini != NULL)
     {
         ini = listarClientes(ini,str);
+        printf("String :%s\n",str);
+
+    }
+
+    //testar depositar dinheiro
+    clienteA = login(11,"1642",inicio);
+
+   /* if(clienteA == NULL)
+    {
+        printf("nao fez login\n");
+    }else
+    {
+        printf("fez login do user de nome: %s\n",clienteA->nome);
+    }*/
+
+    printf("nome do logado: %s\n",clienteA->nome);
+
+     depositou = depositarDinheiro(11/*,char pinconta[4]*/,100,inicio);
+
+
+    if(depositou == true)
+    {
+        printf("depositou\n");
+    }else
+    {
+        printf("nao depositou\n");
+    }
+
+
+
+
+    printf("listar clientes depois\n");
+    while(inicio != NULL)
+    {
+        inicio = listarClientes(inicio,str);
+        printf("String :%s\n",str);
+
+    }
+
+    //testar levantar dinheiro
+
+    //levantou =  levantarDinheiro(11/*,char pinconta[4]*/,101,levantar);
+
+    /*
+    if(levantou == true)
+    {
+        printf("levantou\n");
+    }else
+    {
+        printf("nao levantou\n");
+    }
+
+
+    printf("listar clientes depois levantar\n");
+    while(levantar != NULL)
+    {
+        levantar = listarClientes(levantar,str);
+        printf("String :%s\n",str);
+
+    }
+    */
+
+    //testar transferir dinheiro
+    transferiu =  transferirDinheiro(11/*,char pinconta[4]*/,1,50,transferir);
+    if(transferiu == true)
+    {
+        printf("transferiu\n");
+    }else
+    {
+        printf("nao transferiu\n");
+    }
+
+
+     printf("listar clientes depois transferir\n");
+    while(transferir != NULL)
+    {
+        transferir = listarClientes(transferir,str);
         printf("String :%s\n",str);
 
     }
