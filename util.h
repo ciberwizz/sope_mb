@@ -13,6 +13,8 @@
 #include <unistd.h>
 #include <errno.h>
 #include <signal.h>
+#include <sys/select.h>
+
 
 #define FIFO_ANS "ans"
 #define FIFO_REQ "requests"

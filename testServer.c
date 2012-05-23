@@ -1,6 +1,7 @@
 #include "util.h"
 #include <pthread.h>
 #include <stdbool.h>
+#include <time.h>
 
 #define MAXTHREADS 4
 
@@ -32,6 +33,7 @@ int main() {
 
 	createListclient(&clientes);
 
+	srand(time(NULL));
 	do{
 		str[nth] = (char*) calloc(sizeof(char),1024);
 		if(readFifo(FIFO_REQ,0,str[nth]) == NULL)
@@ -73,6 +75,10 @@ void * trataResp( void* str){
 
 	sscanf(req,"%d",&id);
 	sprintf(resp,"%d OK\n",id);
+
+	ret = rand()%3+2;
+	sleep(ret);
+	printf("sleep=%d; ",ret);
 
 	usleep(500);
 	ret =writeFifo(FIFO_ANS,resp);

@@ -352,33 +352,52 @@ int createFifo(char* ff){
 char* readFifo(char* path, int timeout, char* buff){
 	int fifo = open(path, O_RDWR );
 	int ret, start,end=0;
+	//tem a ver com o TIMEOUT
+	fd_set set;
+	struct timeval tmout;
 
-	start = time(NULL);
 
 	//erro
 	if( fifo == -1)
 		return NULL;
 
-//	do{
-		ret = read(fifo, buff, 1024);
-/*		if(ret==-1)
-			usleep(1 * 1000);
-		end = time(NULL);
-	}while(ret == -1 && (end - start) != timeout );
-printf("ret=%d\n", ret);*/
+	if(timeout){
+
+		FD_ZERO(&set);
+		FD_SET(fifo, &set);
+
+		tmout.tv_sec = timeout;
+		tmout.tv_usec = 0;
+
+		ret = select(fifo + 1, &set, NULL, NULL, &tmout);
+		if(ret <= 0) {
+			if(ret==-1)
+				perror("SELECT");
+			else if( ret == 0)
+				puts("TIMOUT");
+
+			close(fifo);
+			return NULL;
+		}
+	}
+
+
+	ret = read(fifo, buff, 1024);
+
+
 
 
 	close(fifo);
 
+
+	printf("readFIFO ret = %d\n",ret);
+
+
 	if(ret < 0) {
-		//if( errno != EINTR)
 			printf("ERRRROOOO %s",strerror(errno));
 
 		return NULL;
 	}
-
-	//printf("%u stop alarm\n",alarm(0));
-	//wait();
 
 	return buff;
 }
@@ -389,15 +408,20 @@ int writeFifo(char* path, char* buff){
 
 	int len = strlen(buff);
 
-	int wr;
+	int wr, retry = 3;
 
 	while( (wr=write(fifo, buff, len)) == -1){
-		printf("erro: %s\n",strerror(errno));
+		if(retry--){
+			printf("erro: %s\n",strerror(errno));
+			break;
+		}
 		usleep(250 * 1000);
 	}
 
 	close(fifo);
 	return wr;
 }
+
+
 
 
