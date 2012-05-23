@@ -15,7 +15,7 @@
 #include <signal.h>
 #include <sys/select.h>
 
-
+#define MAXCLIENTES 100000
 #define FIFO_ANS "ans"
 #define FIFO_REQ "requests"
 
@@ -68,10 +68,21 @@ bool depositarDinheiro(unsigned int numconta,char pinconta[4],int valor,ListaCli
 bool transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numconta2,int valor,ListaCliente* lista);
 bool escreveAcounts(Cliente a);
 
-//TODO operacoes com fifos
 int createFifo(char*);
 char* readFifo(char*, int, char*);
 int writeFifo(char*, char*);
 void sigpipe_handler(int signo);
+
+
+//recebe lista de cliente e array de pointer para cliente
+//retorna a quantidade de elementos que fica no array
+int listToArray(ListaCliente*, Cliente **);
+//so para ser usado no sort e no bsearch
+int clienteComparator ( const void * , const void * );
+//recebe o array e o num de elementos. usa o qsort
+void sortArrayCliente( Cliente **,int);
+//recebe array,num de elementos e numconta a procurar
+//retorna o apontador para o cliente ou null
+Cliente* bsearchClient(Cliente **,int , unsigned int);
 
 #endif // UTIL_H_INCLUDED

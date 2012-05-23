@@ -79,7 +79,7 @@ void *trataResp( void* a){
 	int rid;
 	char rstat[128];
 
-	while(npedidos < PEDIDOS ){
+	while(npedidos < PEDIDOS ) {
 
 		if(readFifo(FIFO_ANS,3,buff)==NULL)
 			puts("TA A NULL CRL!");
@@ -90,11 +90,9 @@ void *trataResp( void* a){
 
 		if(rid == npedidos)
 			printf("npedidos=%d; rid=%d; rstat=%s;",npedidos,rid,rstat);
-		//if(strcmp(rstat,"OK") == 0){
-			pedidos[rid] = true;
-			npedidos++;
-		/*}
-		else puts("DAFUQ\n");	puts("NOT OK");*/
+
+		pedidos[rid] = true;
+		npedidos++;
 
 	}
 
