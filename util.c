@@ -75,7 +75,7 @@ unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista/*,unsigned
 
     lista->next = listaNova;
 
-    printf("novoCliente->numconta: %u\n", novoCliente->numconta);
+    //printf("novoCliente->numconta: %u\n", novoCliente->numconta);
 
     return novoCliente->numconta;
 
@@ -255,13 +255,13 @@ char* readFifo(char* path, int timeout, char* buff){
 	if( fifo == -1)
 		return NULL;
 
-	do{
-		ret = read(fifo, buff, 16);
-		if(ret==-1)
+//	do{
+		ret = read(fifo, buff, 1024);
+/*		if(ret==-1)
 			usleep(1 * 1000);
 		end = time(NULL);
 	}while(ret == -1 && (end - start) != timeout );
-	printf("ret=%d\n", ret);
+printf("ret=%d\n", ret);*/
 
 
 	close(fifo);
@@ -281,13 +281,11 @@ char* readFifo(char* path, int timeout, char* buff){
 
 int writeFifo(char* path, char* buff){
 
-	int fifo = open(path, O_RDWR | O_APPEND );
+	int fifo = open(path, O_WRONLY | O_APPEND );
 
 	int len = strlen(buff);
 
 	int wr;
-	printf("fifo erro: %s\n",strerror(errno));
-	printf("fifo = %d; path = %s\n",fifo, path);
 
 	while( (wr=write(fifo, buff, len)) == -1){
 		printf("erro: %s\n",strerror(errno));

@@ -22,10 +22,10 @@ admin.o: admin.c
 	gcc -c admin.c
 	
 testUser: testUser.o util.o
-	gcc testUser.o util.o -o testUser
+	gcc testUser.o util.o -pthread -o testUser
 	
 testUser.o: testUser.c
-	gcc -c testUser.c
+	gcc -c testUser.c -pthread
 
 testServer: testServer.o util.o
 	gcc testServer.o util.o -pthread -o testServer 
