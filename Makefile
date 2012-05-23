@@ -1,4 +1,4 @@
-all: util server admin user testUser
+all: util server admin user testUser testServer
 
 util.o: util.c util.h
 	gcc -c util.h util.c
@@ -26,6 +26,12 @@ testUser: testUser.o util.o
 	
 testUser.o: testUser.c
 	gcc -c testUser.c
+
+testServer: testServer.o util.o
+	gcc testServer.o util.o -pthread -o testServer 
+	
+testServer.o: testServer.c
+	gcc -c testServer.c -pthread
 	
 clean:
-	rm -rf *.o *.gch util server admin user testUser
+	rm -rf *.o *.gch util server admin user testUser testServer
