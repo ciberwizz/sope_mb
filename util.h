@@ -14,6 +14,8 @@
 #include <errno.h>
 #include <signal.h>
 
+#define FIFO_ANS "ans"
+#define FIFO_REQ "requests"
 
 //TODO diferenciar cliente e lista de cliente
 typedef struct Cliente Cliente;
@@ -39,11 +41,6 @@ struct ListaCliente{
 	ListaCliente *next;
 	ListaCliente *prev;
 };
-
-
-//TODO MODIFICAR PARA LISTA DE CLIENTES E CLIENTE
-//TODO ADICIONAR REMOVER E LISTAR CLIENTES (RECEBEM LISTA DE CLIENTES)
-//TODO LOGIN FUNCAO
 
 // retorna o cliente criado ou  null se cliente nao existe
 Cliente *  login(unsigned int numconta,char pin[4],ListaCliente* lista);
