@@ -10,14 +10,13 @@
  */
 
 
-#define PEDIDOS 1000
+#define PEDIDOS 10
 
 bool pedidos[PEDIDOS];
 
 void *trataResp( void*);
 int main() {
 	pthread_t reader;
-	pthread_attr_t attr;
 	int ff_req,ff_ans;
 	bool ok = false;
 	int i;
@@ -35,13 +34,11 @@ int main() {
 	for(i = 0; i < PEDIDOS ; i++)
 		pedidos[i] = false;
 
-
+	signal(SIGALRM,SIG_IGN);
 
 	createFifo(FIFO_ANS);
 
-	pthread_attr_init(&attr);
-	pthread_attr_setdetachstate(&attr,PTHREAD_CREATE_JOINABLE);
-	pthread_create(&reader,&attr,trataResp,NULL);
+	pthread_create(&reader,NULL,trataResp,NULL);
 
 
 	for(i = 0 ; i < PEDIDOS; i++){
@@ -53,12 +50,12 @@ int main() {
 	printf("shutdown\n");
 	strcpy(str,"shutdown");
 	writeFifo(FIFO_REQ,str);
-sleep(1);
-	i = pthread_tryjoin_np(&reader,NULL);
+//sleep(1);
+//	i = pthread_tryjoin_np(&reader,NULL);
+//
+//	printf("ERRRO ao fazer tryjoin %d = %s",i,strerror(i));
 
-	printf("ERRRO ao fazer tryjoin %d = %s",i,strerror(i));
-
-//	pthread_join(&reader,NULL);
+	pthread_join(reader,NULL);
 
 	puts("joined");
 	for(i = 0 ; i < PEDIDOS ; i++)
@@ -84,7 +81,7 @@ void *trataResp( void* a){
 
 	while(npedidos < PEDIDOS ){
 
-		if(readFifo(FIFO_ANS,0,buff)==NULL)
+		if(readFifo(FIFO_ANS,3,buff)==NULL)
 			puts("TA A NULL CRL!");
 		else
 			printf("read=%s\n", buff);
