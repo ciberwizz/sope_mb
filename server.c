@@ -157,6 +157,7 @@ int main() {
     ListaCliente * ini;
     ListaCliente * levantar;
     ListaCliente * transferir;
+    ListaCliente * depositar;
     createListclient(&lista);
     char str[128];
     bool depositou;
@@ -182,8 +183,10 @@ int main() {
 
     inicio = &lista;
     ini = &lista;
+    depositar = &lista;
     levantar = &lista;
     transferir = &lista;
+
 
     printf("listar clientes antes\n");
     while(ini != NULL)
@@ -193,54 +196,34 @@ int main() {
 
     }
 
-    //testar depositar dinheiro
-    clienteA = login(11,"1642",inicio);
+    //depositar
+     depositou = depositarDinheiro(11,"1642",100,depositar);
+     if(depositou == true)
+     {
+         printf("depositou\n");
+     }else
+     {
+         printf("nao depositou\n");
+     }
 
-   /* if(clienteA == NULL)
+    printf("listar clientes depois depositar\n");
+    while(depositar != NULL)
     {
-        printf("nao fez login\n");
-    }else
-    {
-        printf("fez login do user de nome: %s\n",clienteA->nome);
-    }*/
-
-    printf("nome do logado: %s\n",clienteA->nome);
-
-     depositou = depositarDinheiro(11/*,char pinconta[4]*/,100,inicio);
-
-
-    if(depositou == true)
-    {
-        printf("depositou\n");
-    }else
-    {
-        printf("nao depositou\n");
-    }
-
-
-
-
-    printf("listar clientes depois\n");
-    while(inicio != NULL)
-    {
-        inicio = listarClientes(inicio,str);
+        depositar = listarClientes(depositar,str);
         printf("String :%s\n",str);
 
     }
 
-    //testar levantar dinheiro
-
-    //levantou =  levantarDinheiro(11/*,char pinconta[4]*/,101,levantar);
-
-    /*
-    if(levantou == true)
-    {
-        printf("levantou\n");
-    }else
-    {
-        printf("nao levantou\n");
-    }
-
+    //levantar
+     /*
+     levantou = levantarDinheiro(11,"1642",50,levantar);
+     if(levantou == true)
+     {
+         printf("levantou\n");
+     }else
+     {
+         printf("nao levantou\n");
+     }
 
     printf("listar clientes depois levantar\n");
     while(levantar != NULL)
@@ -248,27 +231,28 @@ int main() {
         levantar = listarClientes(levantar,str);
         printf("String :%s\n",str);
 
-    }
-    */
+    }*/
 
-    //testar transferir dinheiro
-    transferiu =  transferirDinheiro(11/*,char pinconta[4]*/,1,50,transferir);
-    if(transferiu == true)
-    {
-        printf("transferiu\n");
-    }else
-    {
-        printf("nao transferiu\n");
-    }
+    //tranferir
 
+    transferiu = transferirDinheiro(11,"1642",2,50,transferir);
+     if(transferiu == true)
+     {
+         printf("transferiu\n");
+     }else
+     {
+         printf("nao transferiu\n");
+     }
 
-     printf("listar clientes depois transferir\n");
+    printf("listar clientes depois transferir\n");
     while(transferir != NULL)
     {
         transferir = listarClientes(transferir,str);
         printf("String :%s\n",str);
 
     }
+
+
 
     return 0;
 }

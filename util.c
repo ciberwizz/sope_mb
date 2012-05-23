@@ -1,52 +1,25 @@
 #include "util.h"
 
-Cliente *  login(unsigned int numconta,char pin[4],ListaCliente* lista){
+bool login(unsigned int numconta,char pin[4],Cliente * cliente){
 
-    bool encontrou = false;
-    Cliente* clienteA;
-    while(lista != NULL)
+    bool result = false;
+    printf("login numconta*: %u\n",cliente->numconta);
+    printf("login pin*: %s\n",cliente->pin);
+    printf("login numconta: %u\n",numconta);
+    printf("login pin: %s\n",pin);
+
+    if(cliente->numconta == numconta && strcmp(cliente->pin,pin) == 0)
     {
-        //percorre a lista de clientes a procura de um client com numconta e pin iguais aos introduzidos
-
-        //se encontrar coloca enontrou = true actualiza o valor de clienteA e salta fora do ciclo com o break
-
-        if(lista == NULL)
-        {
-            printf("conta nao existe\n");
-            encontrou = false;
-            break;
-        }
-
-        if(lista->cliente.numconta == numconta && strcmp(lista->cliente.pin,pin) == 0)
-        {
-            printf("login realizado com sucesso\n");
-            encontrou =  true;
-            clienteA = &(lista->cliente);
-            //aqui
-            clienteA->logado = true;
-            //end aqui
-            break;
-        }
-        //lista = (*lista).next; ==> lista = lista->next
-        lista = lista->next;
+        printf("cliente %s\n fez login",cliente->nome);
+        result = true;
     }
 
-    //quando salta fora do ciclo verifica a variavel 'encontrou' para verificar se pode retornar o cliente ou nao
-    if(encontrou == true)
-    {
-        return clienteA;
-    }else
-    {
-        printf("login nao efecutado\n");
-        return NULL;
-    }
-
-
+    return result;
 
 }
 
 
-unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista/*,unsigned int ultimoNumconta*/){
+unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista){
     //aqui
     ultimoNumconta = ultimoNumconta + 1;
     //end aqui
@@ -80,10 +53,6 @@ unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista/*,unsigned
     strcpy (novoCliente->pin,pin);
     //novoCliente->pin = pin;
     novoCliente->saldo = 0;
-
-    //aqui
-    novoCliente->logado = false;
-    //end aqui
 
     //listaNova->cliente = novoCliente;
     listaNova->next = NULL;
@@ -249,197 +218,111 @@ int createListclient(ListaCliente * lista){
 //verificar se existe saldo suficiente
 //verificar o login
 //retirar o valor e fazer return true
-bool levantarDinheiro(unsigned int numconta/*,char pinconta[4]*/, int valor,ListaCliente* lista){
+bool levantarDinheiro(unsigned int numconta,char pinconta[4], int valor,ListaCliente* lista){
     bool result = false;
-    //ListaCliente* lista;
-
-    while(lista != NULL)
-    {
-        if(lista == NULL)
-        {
-            printf("chegou ao fim da lista e nao encontrou o cliente\n");
-            result =  false;
-            break;
-        }
-
-        if(lista->cliente.numconta == numconta)
-        {
-            if(lista->cliente.logado == true)
-            {
-                if(lista->cliente.saldo >= valor)
-                {
-                    lista->cliente.saldo = lista->cliente.saldo - valor;
-                    result = true;
-                    printf("dinheiro levantado\n");
-                    break;
-                }else
-                {
-                 printf("Nao tem saldo suficiente\n");
-                 break;
-                }
-
-            }else
-            {
-                printf("Nao esta logado\n");
-                break;
-            }
-
-        }
-        else
-        {
-            lista = lista->next;
-        }
-    }
-
-    return result;
-}
-
-bool depositarDinheiro(unsigned int numconta/*,char pinconta[4]*/,int valor,ListaCliente * lista){
-    bool result = false;
-    //ListaCliente* lista;
-
-    printf("hello1\n");
-    while(lista != NULL)
-    {
-        printf("hello2\n");
-        printf("numconta: %u\n",lista->cliente.numconta);
-        printf("logado: %s",(lista->cliente.logado)?"true":"false");
-        if(lista == NULL)
-        {
-            printf("hello3\n");
-            printf("chegou ao fim da lista e nao encontrou o cliente\n");
-            result =  false;
-            break;
-        }
-
-        if(lista->cliente.numconta == numconta)
-        {
-            printf("econtrou a conta\n");
-            if(lista->cliente.logado == true)
-            {
-                printf("esta logado\n");
-                lista->cliente.saldo = lista->cliente.saldo + valor;
-                result = true;
-                printf("dinheiro depositado\n");
-                break;
-            }else
-            {
-                    printf("Nao esta logado\n");
-                    result = false;
-                    break;
-            }
-
-        }
-        else
-        {
-            printf("Proximo\n");
-            lista = lista->next;
-        }
-    }
-
-    return result;
-
-}
-
-
-bool transferirDinheiro(unsigned int numconta/*,char pinconta[4]*/,unsigned int numconta2,int valor,ListaCliente * lista){
-    //ListaCliente* lista;
-    ListaCliente* ini;
-
+    bool resultLogin = false;
     ListaCliente* lista1;
-    ListaCliente* lista2;
+    lista1 = searchCliente(numconta,lista);
 
-    Cliente* cliente1;
-    Cliente* cliente2;
-    bool result1 = false;
-    bool result2 = false;
-    bool final = false;
+    printf("lista1 cliente numconta: %u\n",lista1->cliente.numconta);
+    printf("lista1 cliente pin: %s\n",lista1->cliente.pin);
 
-    ini = lista;
+    if(lista1 == NULL)
+    {
+        printf("Erro ao levantar, cliente nao existe\n");
+        result = false;
+    }else
+    {
+        resultLogin = login(numconta,pinconta,&(lista1->cliente));
+        if(resultLogin == true)
+        {
+            if(lista1->cliente.saldo >= valor)
+            {
+                lista1->cliente.saldo = lista1->cliente.saldo - valor;
+                printf("ocorreu levantamento\n");
+                result = true;
+            }else
+            {
+                printf("Nao tem saldo suficiente para o levantamento\n");
+                result = false;
+            }
+
+        }else
+        {
+            printf("Erro levantamento, numconta/pin errados\n");
+            result = false;
+        }
+
+    }
+
+    return result;
+
+}
+
+bool depositarDinheiro(unsigned int numconta,char pinconta[4],int valor,ListaCliente * lista){
+    bool result = false;
+    bool resultLogin = false;
+    ListaCliente* lista1;
+    lista1 = searchCliente(numconta,lista);
+
+    printf("lista1 cliente numconta: %u\n",lista1->cliente.numconta);
+    printf("lista1 cliente pin: %s\n",lista1->cliente.pin);
+
+    if(lista1 == NULL)
+    {
+        printf("Erro ao depositar, cliente nao existe\n");
+        result = false;
+    }else
+    {
+        resultLogin = login(numconta,pinconta,&(lista1->cliente));
+        if(resultLogin == true)
+        {
+            lista1->cliente.saldo = lista1->cliente.saldo + valor;
+            printf("ocorreu deposito\n");
+            result = true;
+        }else
+        {
+            printf("Erro deposito, numconta/pin errados\n");
+            result = false;
+        }
+
+    }
+
+    return result;
+
+}
+
+
+bool transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numconta2,int valor,ListaCliente * lista){
+    bool resultLogin = false;
+    bool result = false;
+    ListaCliente * lista1;
+    ListaCliente * lista2;
 
     lista1 = searchCliente(numconta,lista);
-    lista = ini;//para ficar a apontar outra vez para o inicio
     lista2 = searchCliente(numconta2,lista);
-    lista = ini;//para ficar a apontar outra vez para o inicio
 
     if(lista1 != NULL && lista2 != NULL)
     {
-        while(lista != NULL)
+        resultLogin = login(numconta,pinconta,&(lista1->cliente));
+        if(resultLogin == true)
         {
-            if(lista == NULL)
-            {
-                printf("chegou ao fim lista1\n");
-                break;
-            }else
-            if(lista->cliente.numconta == numconta)
-            {
-                if(lista->cliente.logado == true)
-                {
-                    if(lista->cliente.saldo >= valor)
-                    {
-                        lista->cliente.saldo = lista->cliente.saldo - valor;
-                        printf("foi retirado dinheiro ao cliente1\n");
-                        result1 = true;
-                        break;
-                    }else
-                    {
-                        printf("cliente1 nao tem saldo suficiente\n");
-                        break;
-                    }
-
-                }else
-                {
-                        printf("cliente1 nao esta logado");
-                        break;
-                }
-
-            }else
-            lista = lista->next;
-        }
-
-        lista = ini;
-
-        while(lista != NULL)
+            lista1->cliente.saldo = lista1->cliente.saldo - valor;
+            printf("Transferencia tirou dinheiro\n");
+            lista2->cliente.saldo = lista2->cliente.saldo + valor;
+            printf("Transferencia colocou dinheiro\n");
+            result = true;
+        }else
         {
-            if(lista == NULL)
-            {
-                printf("chegou ao fim lista2\n");
-                break;
-            }else
-            if(lista->cliente.numconta == numconta2)
-            {
-                if(result1 == true)
-                {
-                    lista->cliente.saldo = lista->cliente.saldo + valor;
-                    printf("foi depositado dinheiro no cliente2\n");
-                    result2 = true;
-                    break;
-                }else
-                {
-                    printf("o cliente1 nao esta logado e/ou nao tem saldo suficiente\n");
-                    result2 = false;
-                    break;
-                }
-
-            }else
-            lista = lista->next;
+            printf("Transferencia nao tirou dinheiro, numconta/pin errados\n");
+            result = false;
         }
-
-
-
-
+    }else
+    {
+        printf("Transferencia erro, um dos clientes nao existe\n");
+        result = false;
     }
-
-     if(result1 == true && result2 == true)
-        {
-            final = true;
-        }
-
-        return final;
-
-
-
-
+    return result;
 
 
 }
