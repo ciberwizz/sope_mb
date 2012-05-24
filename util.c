@@ -564,14 +564,24 @@ int listToArray(ListaCliente* lcliente, Cliente **cli){
 
 	return ret;
 }
+
 int clienteComparator ( const void * cli1, const void * cli2 ){
 	/*
 	 * *(Cliente *) elem1 == Cliente *
 	 * *(*(Cliente *)) elem1 == Cliente
 	 */
 
-	Cliente * tcl1 =*(Cliente **) cli1;
-	Cliente * tcl2 =*(Cliente **) cli2;
+	Cliente * tcl1;
+	Cliente * tcl2;
+
+	if( tcl1 == NULL )
+		return 1;
+	else
+		if( tcl2 == NULL )
+			return -1;
+
+	tcl1 = *(Cliente **) cli1;
+	tcl2 = *(Cliente **) cli2;
 
 	unsigned int ncli1 = tcl1->numconta;
 	unsigned int ncli2 = tcl2->numconta;
@@ -602,3 +612,136 @@ Cliente* bsearchClient(Cliente **cli,int ncl, unsigned int nconta) {
 		return NULL;
 
 }
+
+int sendRequest(Request *req ){
+	char line[1024];
+
+	req->pid_cli = getpid();
+
+	switch(req->tipo ){
+
+		case CONSULTAR:
+		 sprintf(line,"%ld %09u %s CONSULTAR\n",(long) req->pid_cli, req->numConta, req->pin);
+		 break;
+
+		case LEVANTAR:
+		 sprintf(line,"%ld %09u %s LEVANTAR %.2lf\n",(long) req->pid_cli, req->numConta, req->pin, req->valor);
+		 break;
+
+		case DEPOSITAR:
+		 sprintf(line,"%ld %09u %s DEPOSITAR %.2lf\n",(long) req->pid_cli, req->numConta, req->pin, req->valor);
+		 break;
+
+		case TRANSFERENCIA:
+		 sprintf(line,"%ld %09u %s TRANSFERENCIA %.2lf %09u\n",(long) req->pid_cli, req->numConta, req->pin, req->valor, req->numConta2);
+		 break;
+
+		case ADICIONAR:
+		 sprintf(line,"%ld %09u %s ADICIONAR %s %s\n",(long) req->pid_cli, req->numConta, req->pin, req->nome, req->pin2);
+		 break;
+
+		case REMOVER:
+		 sprintf(line,"%ld %09u %s REMOVER %09u\n",(long) req->pid_cli, req->numConta, req->pin, req->numConta2);
+		 break;
+
+		case LISTAR:
+		 sprintf(line,"%ld %09u %s LISTAR\n",(long) req->pid_cli, req->numConta, req->pin);
+		 break;
+	}
+
+	printf("sendRequest: %s\n",line);
+	return writeFifo(FIFO_REQ,line);
+
+}
+
+Request * parseRequest(char *line){
+	Request *req = (Request *) calloc(1,sizeof(Request));
+	char * ch;
+	char tipo[128];
+
+	strcpy(req->pedidoOriginal,line);
+
+	//pid
+	ch = strtok(line," ");
+	sscanf(line,"%ld",&req->pid_cli);
+
+	//numConta
+	ch = strtok(ch," ");
+	sscanf(ch,"%u",&req->numConta);
+
+	//pin
+	ch = strtok(ch," ");
+	sscanf(ch,"%s",req->pin);
+
+
+	//tipo
+	ch = strtok(ch," ");
+	sscanf(ch,"%s",tipo);
+
+	if(strcmp(tipo,"CONSULTAR") == 0){
+		req->tipo = CONSULTAR;
+	} else
+
+	if(strcmp(tipo,"LEVANTAR") == 0) {
+		req->tipo = LEVANTAR;
+
+		//valor
+		ch = strtok(ch," ");
+		sscanf(ch,"%lf",&req->valor);
+	} else
+
+	if(strcmp(tipo,"DEPOSITAR") == 0) {
+		req->tipo = DEPOSITAR;
+
+		//valor
+		ch = strtok(ch," ");
+		sscanf(ch,"%lf",&req->valor);
+	} else
+
+	if(strcmp(tipo,"TRANSFERENCIA") == 0) {
+		req->tipo = TRANSFERENCIA;
+
+		//valor
+		ch = strtok(ch," ");
+		sscanf(ch,"%lf",&req->valor);
+
+		//para onde
+		ch = strtok(ch," ");
+		sscanf(ch,"%u",&req->numConta2);
+
+	} else
+	if(strcmp(tipo,"ADICIONAR") == 0) {
+
+		req->tipo = ADICIONAR;
+
+		//nome
+		ch = strtok(ch," ");
+		sscanf(ch,"%s",req->nome);
+
+		//pin
+		ch = strtok(ch," ");
+		sscanf(ch,"%s",req->pin);
+
+	} else
+	if(strcmp(tipo,"REMOVER") == 0) {
+
+		req->tipo = REMOVER;
+
+		//numconta2
+		ch = strtok(ch," ");
+		sscanf(ch,"%u",&req->numConta2);
+
+	} else
+	if(strcmp(tipo,"LISTAR") == 0) {
+		req->tipo = LISTAR;
+	} else
+
+		return NULL;
+
+
+	return req;
+
+}
+
+
+
