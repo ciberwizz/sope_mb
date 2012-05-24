@@ -76,7 +76,7 @@ double consultarSaldo(unsigned int numconta,char pinconta[4],ListaCliente* lista
 bool escreveAcounts(ListaCliente *  lista);
 bool lerAcounts(ListaCliente * lista);
 bool iniciaLog();//cria o ficheiro com a primeira linha como data hora programa operacao
-//bool actualizaLog();//abre o ficheiro e escreve em modo append ficheiro, e chamado detro de cada funcao como levantardinheiro, etc ...
+bool actualizaLog();//abre o ficheiro e escreve em modo append ficheiro, e chamado detro de cada funcao como levantardinheiro, etc ...
 
 int createFifo(char*);
 char* readFifo(char*, int, char*);
