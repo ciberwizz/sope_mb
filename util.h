@@ -30,7 +30,10 @@ struct Cliente{
 	char nome[20];
 	char pin[5];
 	unsigned int numconta;
-	int saldo;
+	//aqui
+	//int saldo;//o saldo tem de ser double
+	double saldo;
+	//aqui
 
 };
 
@@ -66,7 +69,9 @@ int createListclient(ListaCliente *);
 bool levantarDinheiro(unsigned int numconta,char pinconta[4],int valor,ListaCliente* lista);
 bool depositarDinheiro(unsigned int numconta,char pinconta[4],int valor,ListaCliente* lista);
 bool transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numconta2,int valor,ListaCliente* lista);
-bool escreveAcounts(Cliente a);
+double consultarSaldo(unsigned int numconta,char pinconta[4],ListaCliente* lista);
+bool escreveAcounts(ListaCliente *  lista);
+bool lerAcounts();
 
 //TODO operacoes com fifos
 int createFifo(char*);

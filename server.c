@@ -158,6 +158,7 @@ int main() {
     ListaCliente * levantar;
     ListaCliente * transferir;
     ListaCliente * depositar;
+    ListaCliente * verSaldo;
     createListclient(&lista);
     char str[128];
     bool depositou;
@@ -165,6 +166,7 @@ int main() {
     bool transferiu;
     Cliente * clienteA;
     Cliente * clienteB;
+    double saldoCliente;
     //unsigned int ultimoNumconta = 0;//vai ser para utilizar um static int e actaulizar de cada vez que se adiociona um cliente
 
 
@@ -186,6 +188,7 @@ int main() {
     depositar = &lista;
     levantar = &lista;
     transferir = &lista;
+    verSaldo = &lista;
 
 
     printf("listar clientes antes\n");
@@ -235,6 +238,7 @@ int main() {
 
     //tranferir
 
+    /*
     transferiu = transferirDinheiro(11,"1642",2,50,transferir);
      if(transferiu == true)
      {
@@ -251,96 +255,21 @@ int main() {
         printf("String :%s\n",str);
 
     }
+    */
 
+    //saldo
+
+    saldoCliente = consultarSaldo(11,"1645",verSaldo);
+
+    printf("saldo cliente: %f\n",saldoCliente);
 
 
     return 0;
 }
 
+
+
 /*
-
-
-//verificar se existe saldo suficiente
-//verificar o login
-//retirar o valor e fazer return true
-bool levantarDinheiro(unsigned int numconta,char pinconta[4], int valor){
-
-    Clinte *utilizador;
-    utilizador = ini;
-    while(utilizador != NULL)
-    {
-
-        if(Cliente.numconta == numconta && Cliente.pin == pinconta)
-        {
-            Cliente.saldo = Cliente.saldo - valor;
-            break;
-        }
-
-        utilizador = utilizador.next;
-    }
-}
-
-
-
-//verificar o login
-//retirar o valor e fazer return true
-bool depositarDinheiro(unsigned int numconta,char pinconta[4],int valor){
-
-    Clinte *utilizador;
-    utilizador = ini;
-    while(utilizador != NULL)
-    {
-
-        if(Cliente.numconta == numconta && Cliente.pin == pinconta)
-        {
-            Cliente.saldo = Cliente.saldo + valor;
-            break;
-        }
-
-        utilizador = utilizador.next;
-    }
-}
-
-
-//verificar login conta1
-//verificar se existe saldo suf na conta1
-//retirar o valor da conta1 e meter na 2
-bool transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numconta2,int valor){
-    Clinte *utilizador;
-    utilizador = ini;
-
-     while(utilizador != NULL)
-    {
-
-        if(Cliente.numconta == numconta && Cliente.pin == pinconta)
-        {
-            Cliente.saldo = Cliente.saldo + valor;
-            break;
-        }
-
-        utilizador = utilizador.next;
-    }
-
-    utilizador = ini;
-
-    while(utilizador != NULL)
-    {
-
-        if(Cliente.numconta == numconta)
-        {
-            Cliente.saldo = Cliente.saldo + valor;
-            break;
-        }
-
-        utilizador = utilizador.next;
-    }
-
-
-
-
-}
-
-
 void escreveAcounts(Cliente a){
 	FILE *file;
 

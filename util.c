@@ -149,12 +149,17 @@ char * clienteToString(Cliente* cliente){
     }
 
 
-    //printf("antes: %07u\n",cliente->numconta);
     sprintf (nconta,"%07u", cliente->numconta);
-    //printf("depois: %s\n",nconta);
 
-    //sprintf(str,"%s %s     %s     %d",nconta,"nel","1234",12345);
-    sprintf(str,"%s %s     %s     %d",nconta,cliente->nome,cliente->pin,cliente->saldo);
+
+
+    //aqui alterei aqui por causa do saldo ser double
+
+    //sprintf(str,"%s %s     %s     %d",nconta,cliente->nome,cliente->pin,cliente->saldo);
+    sprintf(str,"%s %s     %s     %f",nconta,cliente->nome,cliente->pin,cliente->saldo);
+    //end aqui
+
+
 
     //aqui
     //cliente->numconta =12345;
@@ -324,6 +329,97 @@ bool transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numc
     }
     return result;
 
+
+}
+
+
+double consultarSaldo(unsigned int numconta,char pinconta[4],ListaCliente* lista){
+    double result;
+    ListaCliente * lista1;
+    bool resultLogin;
+
+    lista1 = searchCliente(numconta,lista);
+
+    if(lista1!= NULL)
+    {
+        printf("helloSaldo1\n");
+        resultLogin = login(numconta,pinconta,&(lista1->cliente));
+        if(resultLogin == true)
+        {
+            result = lista1->cliente.saldo;
+            printf("encontrou o saldo = %f\n",result);
+        }else
+        {
+            printf("Erro saldo, user nao esta logado\n");
+        }
+    }else
+    {
+        printf("Erro saldo,cliente nao existe\n");
+    }
+
+    return result;
+}
+
+
+bool escreveAcounts(ListaCliente *  lista){
+    bool result = false;
+    FILE *file;
+
+	if ( (file = fopen ( "accounts.txt", "r" ) ) != NULL )
+	{
+
+	}
+	else {
+
+		file = fopen("accounts.txt", "w+");//se nao existir cria e abre para escrita sem modo append
+
+	}
+
+
+	while(lista != NULL)
+	{
+
+	    if(lista->next != NULL)
+	    {
+	        //aqui nao sei se e %f pq causa do saldo ter de ser double
+	        fprintf(file, "%d    %s    %s    %f",lista->cliente.numconta,lista->cliente.nome,lista->cliente.pin,lista->cliente.saldo);
+            fprintf(file," ");
+	    }else
+	    {
+	        fprintf(file, "%d    %s    %s    %f",lista->cliente.numconta,lista->cliente.nome,lista->cliente.pin,lista->cliente.saldo);
+	        result = true;//quando le a ultima conta mete result = true
+	    }
+
+	}
+
+	fclose(file);
+	return result;
+
+
+
+}
+
+bool lerAcounts(){
+    char mystring [100];
+    bool result = false;
+    FILE *file;
+
+	if ( (file = fopen ( "accounts.txt", "r" ) ) != NULL )
+	{
+        while(!feof(file))
+        {
+            fgets (mystring , 100 , file);
+            printf("%s\n",mystring);
+        }
+	}
+	else {
+
+		printf("erro ao abrir ficheiro\n");
+		result = false;
+
+	}
+
+    fclose(file);
 
 }
 
