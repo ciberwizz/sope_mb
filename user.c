@@ -23,6 +23,10 @@ void interface(){
     Request req;
     Response resp;
 
+
+    sprintf(fifo,"ans%ld",getpid());
+    createFifo(fifo);
+
 	printf("Introduza o numero da conta: ");
 	__fpurge(stdin);
 	fscanf (stdin, "%u", &numconta);
@@ -145,26 +149,46 @@ void interface(){
 				printf("ERRO: unable to send request\n");
 				return;
 			} else {
-
 				sprintf(fifo,"%s%ld",FIFO_ANS,(long) req.pid_cli);
-				if(readFifo(fifo,3,resp.respOriginal) == NULL){
-					printf("ERRO: Unable to get response from server\n");
-					return;
-				} else {
-					//faz parce da resposta e poe os resultados nas variaveis
-					//exp. "ERROR Sem fundos suficientes\n"
-					// status = "ERROR", strError = "Sem fundos suficientes\n"
-					sscanf(resp.respOriginal,"%s %[^\n]s",resp.status, resp.msg);
-					if(strcmp(resp.status, "OK") == 0){
-						printf("Operação realizada com sucesso.Resposta: %s\n",resp.msg);
+
+				if(req.tipo != LISTAR) {
+
+					if(readFifo(fifo,3,resp.respOriginal) == NULL){
+						printf("ERRO: Unable to get response from server\n");
+						remove(fifo);
 						return;
 					} else {
-						printf("Erro na operação: %s\n",resp.msg);
-						return;
+						remove(fifo);
+						//faz parce da resposta e poe os resultados nas variaveis
+						//exp. "ERROR Sem fundos suficientes\n"
+						// status = "ERROR", strError = "Sem fundos suficientes\n"
+						sscanf(resp.respOriginal,"%s %[^\n]s",resp.status, resp.msg);
+						if(strcmp(resp.status, "OK") == 0){
+							printf("Operacao realizada com sucesso. Resposta: %s\n",resp.msg);
+							return;
+						} else {
+							printf("Erro na operacao: %s\n",resp.msg);
+							return;
+						}
 					}
+				} else {
+
+					puts("lista de clientes:");
+
+					do {
+						if(readFifo(fifo,3,resp.respOriginal) == NULL){
+							printf("ERRO: Unable to get response from server\n");
+							remove(fifo);
+							return;
+						}
+
+						printf("%s",resp.respOriginal);
+					}while(strcmp( resp.respOriginal, "end") != 0);
+
+					return
+
+
 				}
-
-
 
 			}
 
@@ -172,10 +196,6 @@ void interface(){
 			break;
 		}
 
-
-
     } while(1);
 
 }
-
-

@@ -11,8 +11,12 @@
 
 
 int main() {
-	int i;
+	int i,ipid;
 	char str[1024];
+	char response[] = "this test was awsome!!!\n";
+	char pid[1024];
+	char fifo[128];
+
 
 	createFifo(FIFO_REQ);
 
@@ -20,6 +24,14 @@ int main() {
 
 		readFifo(FIFO_REQ,0,str);
 		printf("read = %s\n",str);
+		printf("responding: ");
+		sscanf(str, "%s", pid);
+		sprintf(fifo, "ans%s",pid);
+		sprintf(str, "OK %s", response);
+		printf("%s", str);
+
+		writeFifo(fifo,str);
+
 	}
 
 	return 0;
