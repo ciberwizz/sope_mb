@@ -518,6 +518,56 @@ int writeFifo(char* path, char* buff){
 	return wr;
 }
 
+int listToArray(ListaCliente* lcliente, Cliente **cli){
+	int ret, i = 0;
+
+	while(lcliente != NULL && i < MAXCLIENTES){
+		cli[i++] = &(lcliente->cliente);
+		lcliente = lcliente->next;
+		//printf("cli[%d]=%d\t",i-1,cli[i-1]->numconta);
+	}
+
+	ret = i;
+	while(i < MAXCLIENTES)
+		cli[i++] = NULL;
+
+	return ret;
+}
+int clienteComparator ( const void * cli1, const void * cli2 ){
+	/*
+	 * *(Cliente *) elem1 == Cliente *
+	 * *(*(Cliente *)) elem1 == Cliente
+	 */
+
+	Cliente * tcl1 =*(Cliente **) cli1;
+	Cliente * tcl2 =*(Cliente **) cli2;
+
+	unsigned int ncli1 = tcl1->numconta;
+	unsigned int ncli2 = tcl2->numconta;
 
 
+	return (int) (ncli1 - ncli2);
 
+}
+
+void sortArrayCliente( Cliente **cli, int ncl){
+
+	qsort(cli,ncl,sizeof(Cliente*),clienteComparator);
+
+}
+
+Cliente* bsearchClient(Cliente **cli,int ncl, unsigned int nconta) {
+
+	Cliente *cl = calloc(1,sizeof(Cliente*));
+	Cliente **res;
+	cl->numconta = nconta;
+
+	res = bsearch(&cl,cli,ncl,sizeof(Cliente**),clienteComparator);
+	free(cl);
+
+	if(res != NULL)
+		return *res;
+	else
+		return NULL;
+
+}
