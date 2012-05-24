@@ -3,14 +3,9 @@
 bool login(unsigned int numconta,char pin[4],Cliente * cliente){
 
     bool result = false;
-    printf("login numconta*: %u\n",cliente->numconta);
-    printf("login pin*: %s\n",cliente->pin);
-    printf("login numconta: %u\n",numconta);
-    printf("login pin: %s\n",pin);
 
     if(cliente->numconta == numconta && strcmp(cliente->pin,pin) == 0)
     {
-        printf("cliente %s\n fez login",cliente->nome);
         result = true;
     }
 
@@ -20,7 +15,8 @@ bool login(unsigned int numconta,char pin[4],Cliente * cliente){
 
 
 unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista){
-    //aqui
+
+     //aqui
     ultimoNumconta = ultimoNumconta + 1;
     //end aqui
     Cliente *novoCliente;
@@ -43,18 +39,11 @@ unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista){
     }
 
     strcpy (novoCliente->nome,nome);
-    //novoCliente->nome = nome;
-
-    //aqui
-    //novoCliente->numconta = ultimoNumconta+1;
     novoCliente->numconta = ultimoNumconta;
-    //end aqui
 
     strcpy (novoCliente->pin,pin);
-    //novoCliente->pin = pin;
     novoCliente->saldo = 0;
 
-    //listaNova->cliente = novoCliente;
     listaNova->next = NULL;
     listaNova->pid = 0;
     listaNova->prev = lista;
@@ -62,7 +51,6 @@ unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista){
 
     lista->next = listaNova;
 
-    //printf("novoCliente->numconta: %u\n", novoCliente->numconta);
 
     return novoCliente->numconta;
 
@@ -70,6 +58,8 @@ unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista){
 }
 
 unsigned int removeCliente(unsigned int numconta,ListaCliente* lista){
+
+
     while(lista->cliente.numconta != numconta)
     {
 
@@ -81,6 +71,15 @@ unsigned int removeCliente(unsigned int numconta,ListaCliente* lista){
         }
     }
 
+
+
+
+
+    if(numconta == 0)
+    {
+        printf("Erro, esta a tentar remover o admin\n");
+        return 0;
+    }
 
     if(lista->cliente.numconta != numconta)
     {
@@ -97,20 +96,7 @@ unsigned int removeCliente(unsigned int numconta,ListaCliente* lista){
     }
 }
 
-/*
-
-
-lclient = searchCliente(30,&lista);
-
-searchcliente(1,lclient);
-
-
-
-
-*/
 ListaCliente * searchCliente(unsigned int numconta,ListaCliente* lista){
-
-    //ListaCliente* listaclient;
 
     while(lista->cliente.numconta != numconta)
     {
@@ -151,19 +137,8 @@ char * clienteToString(Cliente* cliente){
 
     sprintf (nconta,"%07u", cliente->numconta);
 
+    sprintf(str,"%s %.20s     %s     %.2lf",nconta,cliente->nome,cliente->pin,cliente->saldo);
 
-
-    //aqui alterei aqui por causa do saldo ser double
-
-    //sprintf(str,"%s %s     %s     %d",nconta,cliente->nome,cliente->pin,cliente->saldo);
-    sprintf(str,"%s %s     %s     %f",nconta,cliente->nome,cliente->pin,cliente->saldo);
-    //end aqui
-
-
-
-    //aqui
-    //cliente->numconta =12345;
-    //end aqui
     return str;
 
 
@@ -171,17 +146,35 @@ char * clienteToString(Cliente* cliente){
 
 }
 
+
+Cliente * stringToCliente(char* str){
+    Cliente * clienteA = (Cliente *) malloc(sizeof(Cliente));
+    char nome[20];
+    unsigned int numconta;
+    char pin[5];
+    double saldo;
+
+
+    sscanf (str,"%u %s %s %lf",&numconta,nome,pin,&saldo);//nome e pin ja sao o endereco do primeiro elemento por isso e sem '&'
+
+    //adicionar os valores ontidos ao cliente e retornar
+
+    strcpy(clienteA->nome,nome);
+    clienteA->numconta = numconta;
+    strcpy(clienteA->pin,pin);
+    clienteA->saldo = saldo;
+
+
+
+
+
+
+    return clienteA;
+}
+
+
 //listar todos os clientes e ir devolvendo strings obtidas pelos tostrings de cada cliente, a cada iteracao a listaCliente e actualizada
 ListaCliente * listarClientes(ListaCliente * lista,char* str){
-
-    //abrir o fifo
-    //int resultOpen;
-    //O_WRONLY
-
-    //resultOpen = open (const char *filename, int mode [, int permissions]);
-
-    //usar a tostring
-    //ListaCliente* listaResult;
 
     if(lista == NULL)
     {
@@ -189,8 +182,6 @@ ListaCliente * listarClientes(ListaCliente * lista,char* str){
     }else
 
     {
-        //listaResult = lista;
-        //printf("hello\n");
         strcpy(str,clienteToString(&(lista->cliente)));
         lista = lista->next;
         return lista;
@@ -219,18 +210,12 @@ int createListclient(ListaCliente * lista){
 
 
 
-
-//verificar se existe saldo suficiente
-//verificar o login
-//retirar o valor e fazer return true
 bool levantarDinheiro(unsigned int numconta,char pinconta[4], int valor,ListaCliente* lista){
     bool result = false;
     bool resultLogin = false;
     ListaCliente* lista1;
     lista1 = searchCliente(numconta,lista);
 
-    printf("lista1 cliente numconta: %u\n",lista1->cliente.numconta);
-    printf("lista1 cliente pin: %s\n",lista1->cliente.pin);
 
     if(lista1 == NULL)
     {
@@ -244,17 +229,14 @@ bool levantarDinheiro(unsigned int numconta,char pinconta[4], int valor,ListaCli
             if(lista1->cliente.saldo >= valor)
             {
                 lista1->cliente.saldo = lista1->cliente.saldo - valor;
-                printf("ocorreu levantamento\n");
                 result = true;
             }else
             {
-                printf("Nao tem saldo suficiente para o levantamento\n");
                 result = false;
             }
 
         }else
         {
-            printf("Erro levantamento, numconta/pin errados\n");
             result = false;
         }
 
@@ -270,12 +252,8 @@ bool depositarDinheiro(unsigned int numconta,char pinconta[4],int valor,ListaCli
     ListaCliente* lista1;
     lista1 = searchCliente(numconta,lista);
 
-    printf("lista1 cliente numconta: %u\n",lista1->cliente.numconta);
-    printf("lista1 cliente pin: %s\n",lista1->cliente.pin);
-
     if(lista1 == NULL)
     {
-        printf("Erro ao depositar, cliente nao existe\n");
         result = false;
     }else
     {
@@ -283,11 +261,9 @@ bool depositarDinheiro(unsigned int numconta,char pinconta[4],int valor,ListaCli
         if(resultLogin == true)
         {
             lista1->cliente.saldo = lista1->cliente.saldo + valor;
-            printf("ocorreu deposito\n");
             result = true;
         }else
         {
-            printf("Erro deposito, numconta/pin errados\n");
             result = false;
         }
 
@@ -307,24 +283,22 @@ bool transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numc
     lista1 = searchCliente(numconta,lista);
     lista2 = searchCliente(numconta2,lista);
 
+
+
     if(lista1 != NULL && lista2 != NULL)
     {
         resultLogin = login(numconta,pinconta,&(lista1->cliente));
         if(resultLogin == true)
         {
             lista1->cliente.saldo = lista1->cliente.saldo - valor;
-            printf("Transferencia tirou dinheiro\n");
             lista2->cliente.saldo = lista2->cliente.saldo + valor;
-            printf("Transferencia colocou dinheiro\n");
             result = true;
         }else
         {
-            printf("Transferencia nao tirou dinheiro, numconta/pin errados\n");
             result = false;
         }
     }else
     {
-        printf("Transferencia erro, um dos clientes nao existe\n");
         result = false;
     }
     return result;
@@ -342,19 +316,17 @@ double consultarSaldo(unsigned int numconta,char pinconta[4],ListaCliente* lista
 
     if(lista1!= NULL)
     {
-        printf("helloSaldo1\n");
         resultLogin = login(numconta,pinconta,&(lista1->cliente));
         if(resultLogin == true)
         {
             result = lista1->cliente.saldo;
-            printf("encontrou o saldo = %f\n",result);
         }else
         {
-            printf("Erro saldo, user nao esta logado\n");
+            return -1.0;
         }
     }else
     {
-        printf("Erro saldo,cliente nao existe\n");
+        return -1.0;
     }
 
     return result;
@@ -362,36 +334,45 @@ double consultarSaldo(unsigned int numconta,char pinconta[4],ListaCliente* lista
 
 
 bool escreveAcounts(ListaCliente *  lista){
+    ListaCliente * listaclient;
     bool result = false;
     FILE *file;
+    char str[128];
 
 	if ( (file = fopen ( "accounts.txt", "r" ) ) != NULL )
 	{
 
+        remove("accounts.txt");
+        file = fopen("accounts.txt", "w");
+
 	}
 	else {
 
-		file = fopen("accounts.txt", "w+");//se nao existir cria e abre para escrita sem modo append
-
+		file = fopen("accounts.txt", "w");
 	}
 
+
+    //escrever na primeira linha o numconta do ultimo jogador registado
+    fprintf(file,"%07u\n",ultimoNumconta);
 
 	while(lista != NULL)
 	{
 
-	    if(lista->next != NULL)
+
+	    if(lista->next == NULL)
 	    {
-	        //aqui nao sei se e %f pq causa do saldo ter de ser double
-	        fprintf(file, "%d    %s    %s    %f",lista->cliente.numconta,lista->cliente.nome,lista->cliente.pin,lista->cliente.saldo);
-            fprintf(file," ");
-	    }else
-	    {
-	        fprintf(file, "%d    %s    %s    %f",lista->cliente.numconta,lista->cliente.nome,lista->cliente.pin,lista->cliente.saldo);
-	        result = true;//quando le a ultima conta mete result = true
+	        listaclient = listarClientes(lista,str);
+            fprintf(file,"%s",str);
+
+	        break;
 	    }
 
+        listaclient = listarClientes(lista,str);
+        fprintf(file,"%s\n",str);
+        lista = lista->next;
 	}
 
+    result = true;
 	fclose(file);
 	return result;
 
@@ -399,27 +380,77 @@ bool escreveAcounts(ListaCliente *  lista){
 
 }
 
-bool lerAcounts(){
+//ignora a primeira linha pois contem o numconta do ultimo jogador registado
+bool lerAcounts(ListaCliente * listaler){
     char mystring [100];
-    bool result = false;
+    bool result = true;
+    Cliente *  clienteA = (Cliente * ) malloc(sizeof(Cliente));
     FILE *file;
 
 	if ( (file = fopen ( "accounts.txt", "r" ) ) != NULL )
 	{
+	    fgets (mystring , 100 , file);//para passar a primeira linha a frente
+	    sscanf(mystring,"%u",&ultimoNumconta);
+
         while(!feof(file))
         {
             fgets (mystring , 100 , file);
-            printf("%s\n",mystring);
+            //tratar a mystring e passar os dados stringToCliente que devolve um apontador para cliente
+            clienteA = stringToCliente(mystring);
+
+            //adicionar este cliente a lista
+            strcpy(listaler->cliente.nome,clienteA->nome);
+            listaler->cliente.numconta = clienteA->numconta;
+            strcpy(listaler->cliente.pin,clienteA->pin);
+            listaler->cliente.saldo = clienteA->saldo;
+
+            listaler->pid = 0;
+
+            listaler->next = (ListaCliente * ) malloc(sizeof(ListaCliente));
+            listaler->next->prev = listaler;
+            listaler = listaler->next;
+
         }
+            //neste momento estou numa lista que nao tenha nada
+            listaler = listaler->prev;//voltar a ultima lista que tem alguma coisa nela guardada
+            free(listaler->next);//libertar a memoria usada pelo malloc
+            listaler->next = NULL;//dizer que a lista a seguir a ultima lista com um cliente e vazia
 	}
 	else {
 
-		printf("erro ao abrir ficheiro\n");
 		result = false;
 
 	}
 
     fclose(file);
+    return result;
+
+}
+
+//cria o ficheiro com a primeira linha como data hora programa operacao
+bool iniciaLog(){
+
+    bool result = false;
+    FILE *file;
+
+	if ( (file = fopen ( "logfile.txt", "r" ) ) != NULL )
+	{
+
+	}
+	else {
+
+		file = fopen("logfile.txt", "a+");//se nao existir cria e abre para escrita com modo append
+
+	}
+
+
+	fprintf(file,"   DATA     HORA   PROGRAMA   OPERACAO\n");
+	result = true;
+
+	return result;
+
+
+
 
 }
 

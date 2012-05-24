@@ -110,6 +110,9 @@ unsigned int removeCliente(unsigned int numconta,ListaCliente* lista);
 //transofrma os dados do cliente numa string
 char * clienteToString(Cliente* cliente);
 
+//recebe a linha obtida no accounts.txt e transforma num cliente, sera usada em leraccounts
+Cliente * stringToCliente(char* str);
+
 
 //retorna a lista onde um determinado cliente se encontra, else retorna null
 ListaCliente * searchCliente(unsigned int numconta,ListaCliente* lista);
@@ -125,7 +128,9 @@ bool depositarDinheiro(unsigned int numconta,char pinconta[4],int valor,ListaCli
 bool transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numconta2,int valor,ListaCliente* lista);
 double consultarSaldo(unsigned int numconta,char pinconta[4],ListaCliente* lista);
 bool escreveAcounts(ListaCliente *  lista);
-bool lerAcounts();
+bool lerAcounts(ListaCliente * lista);
+bool iniciaLog();//cria o ficheiro com a primeira linha como data hora programa operacao
+//bool actualizaLog();//abre o ficheiro e escreve em modo append ficheiro, e chamado detro de cada funcao como levantardinheiro, etc ...
 
 int createFifo(char*);
 char* readFifo(char*, int, char*);
