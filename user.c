@@ -2,59 +2,45 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 
 void interface();
 
 
 int main() {
-
-	pid_t pid = getpid();
-	char spid[11];
-	char buff[1024];
-	int i=0;
-
-	sprintf(spid,"ans%ld",(long int) 1234);//pid);
-/*	if( createFifo(spid) != 0) {
-		printf("\nimpossivel criar FIFO.\n");
-//		return 1;
-	}
-*/
-//	interface();
-
-//	writeFifo(spid, "fuuuuuuu");
-	while( readFifo(spid,3,buff) != NULL)
-		printf("%04d==> %s\n",i++,buff);
-
-	if(buff != NULL)
-		printf("final: %s\n",buff);
-	//else
-		puts("timeout");
-
-	//remove(spid);
-	return 0;
+	interface();
 }
 
 void interface(){
     printf("interface\n");
 
     unsigned int numconta;
-    char pin[5];
+    double valor;
+    char pin[1024];
+    char fifo[128];
     char accao;
+    Request req;
+    Response resp;
 
-    printf("Introduza o numero da conta: ");
-    fscanf (stdin, "%ud", &numconta);
+	printf("Introduza o numero da conta: ");
+	__fpurge(stdin);
+	fscanf (stdin, "%u", &numconta);
+	req.numConta = numconta % MAX_NUM_CLIENTES;
 
-    __fpurge(stdin);
+
 
     printf("Introduza o pin da conta: ");
-    fscanf (stdin, "%s", pin);
 
-    while(strlen(pin) != 4)
-    {
+    fscanf (stdin, "%s", pin);
+    __fpurge(stdin);
+
+    while(strlen(pin) != 4){
             printf("erro pin nao tem 4 caracteres\n");
             printf("Introduza o pin da conta: ");
             fscanf (stdin, "%s", pin);
     }
+    strcpy( req.pin, pin );
 
 
     printf("num da conta foi : %d\n", numconta);
@@ -62,6 +48,9 @@ void interface(){
     printf("pin da conta foi : %s\n", pin);
 
     do {
+
+    	req.tipo = INVALID;
+
 		printf("\n\n");
 		printf("Que operacao deseja efectuar?\n");
 		printf("Depositar dinheiro?  (d)\n");
@@ -78,25 +67,57 @@ void interface(){
 //		printf("Depositar dinheiro?  (d)\n");
 		case 'd':
 		case 'D':
-			//TODO enviar comando para o fifo request e esperar pela resposta
+
+			do {
+				printf("Que valor deseja depositar? ");
+				__fpurge(stdin);
+				scanf(" %lf",&valor);
+			}while( valor < 0 );
+			req.valor = valor;
+			req.tipo = DEPOSITAR;
+
 			break;
 
 //		printf("Levantar dinheiro?   (l)\n");
 		case 'l':
 		case 'L':
-			//TODO enviar comando para o fifo request e esperar pela resposta
+
+			do {
+				printf("Que valor deseja levantar? ");
+				__fpurge(stdin);
+				scanf("%lf",&valor);
+			}while( valor < 0 );
+			req.valor = valor;
+			req.tipo = LEVANTAR;
 			break;
 
 //		printf("Transferir dinheiro? (t)\n");
 		case 't':
 		case 'T':
-			//TODO enviar comando para o fifo request e esperar pela resposta
+
+			printf("Para que conta deseja transferir? ");
+			__fpurge(stdin);
+			scanf("%u",&numconta);
+			req.numConta2 = numconta % MAX_NUM_CLIENTES;
+
+			do {
+				printf("Que valor deseja transferir? ");
+				__fpurge(stdin);
+				scanf("%lf",&valor);
+			}while( valor < 0 );
+
+			req.valor = valor;
+			req.tipo = TRANSFERENCIA;
+			break;
+
+
 			break;
 
 //		printf("Consultar saldo?     (c)\n");
 		case 'c':
 		case 'C':
-			//TODO enviar comando para o fifo request e esperar pela resposta
+
+			req.tipo = CONSULTAR;
 			break;
 
 //		printf("Sair?                (s)\n");
@@ -104,10 +125,57 @@ void interface(){
 		case 'S':
 			return;
 			break;
-
+			//TODO PARA TESTES
+		case 'a': //adicionar
+			req.tipo = ADICIONAR;
+			strcpy(req.nome, "2314");
+			strcpy(req.pin2, "2314");
+			break;
+		case 'r':
+			req.tipo = REMOVER;
+			req.numConta2 = 123445;
+			break;
+		default:
+			req.tipo = INVALID;
+			break;
 		}
+
+		if(req.tipo != INVALID) {
+			if(sendRequest(&req) < 0) {
+				printf("ERRO: unable to send request\n");
+				return;
+			} else {
+
+				sprintf(fifo,"%s%ld",FIFO_ANS,(long) req.pid_cli);
+				if(readFifo(fifo,3,resp.respOriginal) == NULL){
+					printf("ERRO: Unable to get response from server\n");
+					return;
+				} else {
+					//faz parce da resposta e poe os resultados nas variaveis
+					//exp. "ERROR Sem fundos suficientes\n"
+					// status = "ERROR", strError = "Sem fundos suficientes\n"
+					sscanf(resp.respOriginal,"%s %[^\n]s",resp.status, resp.msg);
+					if(strcmp(resp.status, "OK") == 0){
+						printf("Operação realizada com sucesso.Resposta: %s\n",resp.msg);
+						return;
+					} else {
+						printf("Erro na operação: %s\n",resp.msg);
+						return;
+					}
+				}
+
+
+
+			}
+
+
+			break;
+		}
+
+
 
     } while(1);
 
 }
+
 

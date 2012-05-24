@@ -15,14 +15,68 @@
 #include <signal.h>
 #include <sys/select.h>
 
+/*
+ *   TODO A definir
+ *
+ * - funcao para servir de thread
+ * - TESTAR
+ *
+ *
+ */
+
+
+/*   TODO LIST Miguel
+ *
+ * - criar a struct request
+ * - definir o protocolo de comunicacao
+ * - criar funcoes de protocolo
+ * 		- funcoes de cliente para mandar para o FIFO requests
+ * - criar funcao de parce de pedido para a struct request
+ * - modificar funcoes para usar request em vez de char[]
+ * - modificar as funcoes para usar o array de clientes
+ *
+ */
+
+
+/*
+ *    TODO LIST Nelson
+ *
+ *
+ *
+ *
+ */
+
 #define MAXCLIENTES 100000
+#define MAX_NUM_CLIENTES 10000000
 #define FIFO_ANS "ans"
 #define FIFO_REQ "requests"
 
-//TODO diferenciar cliente e lista de cliente
 typedef struct Cliente Cliente;
-typedef struct ListaCliente ListaCliente;//mudar tudo nos outros files de Cliente para ListaCliente
+typedef struct ListaCliente ListaCliente;
+typedef Cliente ** arrCliente;
+typedef struct Request Request;
+typedef struct Response Response;
 
+enum Tipo {CONSULTAR, LEVANTAR, DEPOSITAR, TRANSFERENCIA, ADICIONAR, REMOVER, LISTAR, INVALID = -1};
+enum User {ADMIN,CLIENTE,SERVER};
+struct Request {
+	 char pedidoOriginal[128];
+	 unsigned int numConta;
+	 char pin[5];
+	 pid_t pid_cli;
+	 enum Tipo tipo;
+	 unsigned int numConta2;
+	 char pin2[5];
+	 char nome[21];
+	 double valor;
+	 enum User user;
+};
+struct Response {
+	char respOriginal[128];
+	char status[128];
+	char msg[128];
+
+};
 
 static unsigned int ultimoNumconta = 0;
 
@@ -75,6 +129,7 @@ bool lerAcounts();
 
 int createFifo(char*);
 char* readFifo(char*, int, char*);
+// args{ path do fifo, string to write} return  success >0
 int writeFifo(char*, char*);
 void sigpipe_handler(int signo);
 
@@ -89,5 +144,15 @@ void sortArrayCliente( Cliente **,int);
 //recebe array,num de elementos e numconta a procurar
 //retorna o apontador para o cliente ou null
 Cliente* bsearchClient(Cliente **,int , unsigned int);
+
+//envia o request para o FIFO requests. retorna >0 bem sucedido
+int sendRequest(Request *);
+
+//parse do pedido, chama funcao apropriada
+Request * parseRequest(char *);
+
+
+
+
 
 #endif // UTIL_H_INCLUDED

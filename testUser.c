@@ -10,6 +10,26 @@
  */
 
 
+int main() {
+	int i;
+	char str[1024];
+
+	createFifo(FIFO_REQ);
+
+	while(1){
+
+		readFifo(FIFO_REQ,0,str);
+		printf("read = %s\n",str);
+	}
+
+	return 0;
+
+}
+
+
+
+
+/*
 #define PEDIDOS 10
 
 bool pedidos[PEDIDOS];
@@ -33,8 +53,6 @@ int main() {
 	//ini do array pedidos
 	for(i = 0; i < PEDIDOS ; i++)
 		pedidos[i] = false;
-
-	signal(SIGALRM,SIG_IGN);
 
 	createFifo(FIFO_ANS);
 
@@ -101,7 +119,7 @@ void *trataResp( void* a){
 	return NULL;
 }
 
-
+*/
 
 
 
