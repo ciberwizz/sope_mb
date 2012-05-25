@@ -435,7 +435,8 @@ bool iniciaLog(){
 
 	if ( (file = fopen ( "logfile.txt", "r" ) ) != NULL )
 	{
-
+         fclose(file);
+         return false;
 	}
 	else {
 
@@ -444,7 +445,7 @@ bool iniciaLog(){
 	}
 
 
-	fprintf(file,"   DATA     HORA   PROGRAMA   OPERACAO\n");
+	fprintf(file,"   DATA          HORA      PROGRAMA      OPERACAO\n");
 	result = true;
 	fclose(file);
 
@@ -467,95 +468,115 @@ bool actualizaLog(Request * request,Response * response){
     struct tm tm = *localtime(&t);
 
 
-	if ( (file = fopen ( "logfile.txt", "r" ) ) != NULL )
-	{
 
-	}
-	else {
+    iniciaLog();
 
-		file = fopen("logfile.txt", "a+");//se nao existir cria e abre para escrita com modo append
+    file = fopen("logfile.txt", "a+");//se nao existir cria e abre para escrita com modo append
 
-	}
+    printf("response\n");
 
     if(response == NULL)
     {
+        printf("not null\n");
         if(request->user == ADMIN)
         {
+            printf("ADMIN\n");
             strcpy(programa,"ADMIN");
         }else
 
         if(request->user == CLIENTE)
         {
+            printf("CLIENTE\n");
             strcpy(programa,"CLIENTE");
         }else
 
         if(request->user == SERVER)
         {
+            printf("SERVER\n");
             strcpy(programa,"SERVER");
         }
 
         if(request->tipo == CONSULTAR)
         {
+            printf("CONSULTAR\n");
             strcpy(operacao,"CONSULTAR");
         }else
 
         if(request->tipo == LEVANTAR)
         {
+            printf("LEVANTAR\n");
             strcpy(operacao,"LEVANTAR");
         }else
 
         if(request->tipo == DEPOSITAR)
         {
+            printf("DEPOSITAR\n");
             strcpy(operacao,"DEPOSITAR");
         }else
 
         if(request->tipo == TRANSFERENCIA)
         {
+            printf("TRANSFERENCIA\n");
             strcpy(operacao,"TRANSFERENCIA");
         }else
 
         if(request->tipo == ADICIONAR)
         {
+            printf("ADICIONAR\n");
             strcpy(operacao,"ADICIONAR");
         }else
 
         if(request->tipo == REMOVER)
         {
+            printf("REMOVER\n");
             strcpy(operacao,"REMOVER");
         }else
 
          if(request->tipo == LISTAR)
         {
+            printf("LISTAR\n");
             strcpy(operacao,"LISTAR");
         }else
 
          if(request->tipo == INVALID)
         {
+            printf("INVALID\n");
+            strcpy(operacao,"INVALID");
             result = false;
         }
 
         pid = request->pid_cli;
-        fprintf(file,"   %d-%d-%d     %d:%d:%d   %s pid=%d  %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,programa,(int)pid,operacao);
+        fprintf(file,"   %02d-%02d-%02d     %02d:%02d:%02d   %s pid=%d  %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,programa,(int)pid,operacao);
         //fprintf(file,"   DATA     HORA   PROGRAM pid=pid   OPERACAO\n");
+        result = true;
     }else
 
     {
+        //se houver response
         if(strcmp(response->status,"ERRO") == 0)
         {
             //se o status tiver a erro, manda para a mensagem "erro operacao"
+            printf("ERRO operacao\n");
             strcpy(mensagem,"ERRO operacao");
+            pid = request->pid_cli;
+            strcpy(programa,"SERVER");
+            strcpy(operacao,response->msg);
+            fprintf(file,"   %02d-%02d-%02d     %02d:%02d:%02d   %s pid=%d  %s %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,programa,(int)pid,operacao,mensagem);
+            result = false;
         }else
         {
             //se o status nao estiver a erro manda para a mensagem a msg
-            strcpy(mensagem,response->msg);
+            printf("Mensagem copiada\n");
+            strcpy(mensagem,"OK");
+            pid = request->pid_cli;
+            strcpy(programa,"SERVER");
+            strcpy(operacao,mensagem);
+            fprintf(file,"   %02d-%02d-%02d     %02d:%02d:%02d   %s pid=%d  %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,programa,(int)pid,operacao);
+            result = true;
         }
-        pid = request->pid_cli;
-        strcpy(programa,"SERVER");
-        strcpy(operacao,mensagem);
-        fprintf(file,"   %d-%d-%d     %d:%d:%d   %s pid=%d  %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,programa,(int)pid,operacao);
+
     }
 
-	result = true;
 
 
     fclose(file);
@@ -787,7 +808,7 @@ Request * parseRequest(char *line){
 
 	//pid
 	ch = strtok(line," ");
-	sscanf(line,"%ld",&req->pid_cli);
+	sscanf(line,"%ld",(long*)&req->pid_cli);
 
 	//numConta
 	ch = strtok(ch," ");

@@ -25,6 +25,8 @@ int main() {
     double saldoCliente;
     unsigned int resultRemover;
     Cliente * clienteTestar;
+    Request * request;
+    Response * response;
 
 
 
@@ -59,6 +61,8 @@ int main() {
 
 
 
+
+    /*
     //testar escrever accounts
 
 
@@ -91,6 +95,35 @@ int main() {
         printf("String :%s\n",str);
 
     }
+    */
+
+    //testar logs
+
+    request = (Request *) malloc(sizeof(Request));
+    response = (Response *) malloc(sizeof(Response));
+
+    strcpy(request->nome,"nelson");
+    request->numConta = 1;
+    request->numConta2 = 2;
+    strcpy(request->pedidoOriginal,"Depositar dinheiro");
+    request->pid_cli = 12;
+    strcpy(request->pin,"1234");
+    strcpy(request->pin2,"5678");
+    request->valor = 100;
+    request->user = CLIENTE;
+    request->tipo = DEPOSITAR;
+
+
+
+    //strcpy(response->status,"OK");
+    //strcpy(response->respOriginal,"levantar dinheiro");
+    //strcpy(response->msg,"levantar");
+
+
+    response = NULL;
+    //iniciaLog();
+    actualizaLog(request,response);
+
 
 
 
