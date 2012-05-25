@@ -91,7 +91,7 @@ unsigned int addCliente(char nome[20],char pin[4],arrCliente clienteArray){
 
 }
 
-
+/*
 unsigned int removeCliente(unsigned int numconta,ListaCliente* lista){
 
 
@@ -129,6 +129,42 @@ unsigned int removeCliente(unsigned int numconta,ListaCliente* lista){
 
         return numconta;
     }
+}*/
+
+unsigned int removeCliente(unsigned int numconta,arrCliente clienteArray){
+
+//TODO bug no remove -> segfault
+    int i = 0;
+    int k = 0;
+    int acum = 0;
+    if(numconta == 0)
+    {
+        printf("Erro, esta a tentar remover o admin\n");
+        return 0;
+    }
+
+
+    while(clienteArray[i] != NULL && i < MAX_NUM_CLIENTES)
+        i++;
+
+    //aqui nao pode ser igual a null
+    free(clienteArray[i]);
+    clienteArray[i] = NULL;
+
+    for(k; k < MAX_NUM_CLIENTES;k++)
+    {
+        if(clienteArray[k] == NULL)
+            ++acum;
+    }
+    sortArrayCliente(clienteArray,acum);
+
+
+
+    return numconta;
+
+
+
+
 }
 
 ListaCliente * searchCliente(unsigned int numconta,ListaCliente* lista){

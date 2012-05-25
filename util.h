@@ -106,7 +106,8 @@ bool login(unsigned int numconta,char pin[4],Cliente * cliente);
 unsigned int addCliente(char nome[20],char pin[4],arrCliente clienteArray);
 
 //remove um cliente e retorna o numero da conta se ocorreu com sucesso, zero se ocorreu erro
-unsigned int removeCliente(unsigned int numconta,ListaCliente* lista);
+//unsigned int removeCliente(unsigned int numconta,ListaCliente* lista);
+unsigned int removeCliente(unsigned int numconta,arrCliente clienteArray);
 
 //transofrma os dados do cliente numa string
 char * clienteToString(Cliente* cliente);

@@ -31,6 +31,7 @@ int main() {
     */
     Cliente * arrayclient[MAX_NUM_CLIENTES];
     arrCliente temp;
+    arrCliente temp2;
     char str[128];
     int i;
     //printf("cria array\n");
@@ -74,6 +75,28 @@ int main() {
 
         memset(str,0,128);
         temp = listarClientes(temp,str,&i);
+
+
+
+    }
+
+    //removecliente
+
+    removeCliente(3,arrayclient);
+
+    i = 0;
+    printf("listar clientes\n");
+    memset(str,0,128);
+    temp2 = listarClientes(arrayclient,str,&i);
+
+
+    while(temp2 != NULL)
+    {
+            printf("String :%s\n",str);
+
+
+        memset(str,0,128);
+        temp2 = listarClientes(temp,str,&i);
 
 
 
