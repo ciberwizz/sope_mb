@@ -606,10 +606,10 @@ bool actualizaLog(Request * request,Response * response){
     struct tm tm = *localtime(&t);
 
 
-
+    //se nao existir cria e abre para escrita com modo append
     iniciaLog();
 
-    file = fopen("logfile.txt", "a+");//se nao existir cria e abre para escrita com modo append
+    file = fopen("logfile.txt", "a+");
 
     printf("response\n");
 
@@ -684,7 +684,7 @@ bool actualizaLog(Request * request,Response * response){
         }
 
         pid = request->pid_cli;
-        fprintf(file,"   %02d-%02d-%02d     %02d:%02d:%02d   %s pid=%d  %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,programa,(int)pid,operacao);
+        fprintf(file,"   %02d-%02d-%02d     %02d:%02d:%02d   %s Cliente(pid=%d)  %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,programa,(int)pid,operacao);
         //fprintf(file,"   DATA     HORA   PROGRAM pid=pid   OPERACAO\n");
         result = true;
     }else
@@ -699,7 +699,7 @@ bool actualizaLog(Request * request,Response * response){
             pid = request->pid_cli;
             strcpy(programa,"SERVER");
             strcpy(operacao,response->msg);
-            fprintf(file,"   %02d-%02d-%02d     %02d:%02d:%02d   %s pid=%d  %s %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,programa,(int)pid,operacao,mensagem);
+            fprintf(file,"   %02d-%02d-%02d     %02d:%02d:%02d   %s Cliente(pid=%d)  %s %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,programa,(int)pid,operacao,mensagem);
             result = false;
         }else
         {
@@ -709,7 +709,7 @@ bool actualizaLog(Request * request,Response * response){
             pid = request->pid_cli;
             strcpy(programa,"SERVER");
             strcpy(operacao,mensagem);
-            fprintf(file,"   %02d-%02d-%02d     %02d:%02d:%02d   %s pid=%d  %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,programa,(int)pid,operacao);
+            fprintf(file,"   %02d-%02d-%02d     %02d:%02d:%02d   %s Cliente(pid=%d)  %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,programa,(int)pid,operacao);
             result = true;
         }
 
@@ -1021,7 +1021,7 @@ Request * parseRequest(char *line){
 		return NULL;
 	}
 
-
+	actualizaLog(req,NULL);
 	return req;
 
 }
@@ -1143,6 +1143,8 @@ Response * processRequest(Request * request, arrCliente lista){
 
 			 break;
 		}
+
+	actualizaLog(request,response);
 
 	return response;
 }
