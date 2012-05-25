@@ -39,6 +39,7 @@ int main() {
 		createArrayclient(lcliente);
 
 
+
 	do{
 		memset(str,0,1024);
 
@@ -96,6 +97,9 @@ void * trataResp( void* str){
 			pthread_mutex_lock(&mlista);
 			lcl = listarClientes(lcl,temp,&n);
 			pthread_mutex_unlock(&mlista);
+
+			if(lcl == NULL)
+				break;
 
 			tmp = strtok(temp," ");
 			do {
