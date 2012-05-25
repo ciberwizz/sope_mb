@@ -70,19 +70,16 @@ int main() {
 
     while(temp != NULL)
     {
-            printf("String :%s\n",str);
+		printf("String :%s\n",str);
 
-
-        memset(str,0,128);
+		memset(str,0,128);
         temp = listarClientes(temp,str,&i);
-
-
-
     }
 
     //removecliente
 
     removeCliente(3,arrayclient);
+    puts("REMOVEU!!!");
 
     i = 0;
     printf("listar clientes\n");
@@ -92,14 +89,10 @@ int main() {
 
     while(temp2 != NULL)
     {
-            printf("String :%s\n",str);
-
+		printf("i = %d; String : %s\n",i, str);
 
         memset(str,0,128);
-        temp2 = listarClientes(temp,str,&i);
-
-
-
+        temp2 = listarClientes(temp2,str,&i);
     }
 
     /*

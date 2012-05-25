@@ -137,34 +137,35 @@ unsigned int removeCliente(unsigned int numconta,arrCliente clienteArray){
     int i = 0;
     int k = 0;
     int acum = 0;
+    Cliente * cli;
+    Cliente * subt;
+
     if(numconta == 0)
     {
         printf("Erro, esta a tentar remover o admin\n");
         return 0;
     }
 
-
-    while(clienteArray[i] != NULL && i < MAX_NUM_CLIENTES)
-        i++;
-
-    //aqui nao pode ser igual a null
-    free(clienteArray[i]);
-    clienteArray[i] = NULL;
-
-    for(k; k < MAX_NUM_CLIENTES;k++)
-    {
+    for(k = 0; k < MAX_NUM_CLIENTES;k++)
         if(clienteArray[k] == NULL)
-            ++acum;
-    }
-    sortArrayCliente(clienteArray,acum);
+            break;
 
 
+    cli = bsearchClient(clienteArray, k, numconta);
+
+    free(cli);
+
+    subt = clienteArray[k-1];
+    clienteArray[k-1] = NULL;
+
+    for(i = k-2; i >= 0;i--)
+    	if(clienteArray[i] == cli)
+    		clienteArray[i] = subt;
+    k--;
+
+    sortArrayCliente(clienteArray,k);
 
     return numconta;
-
-
-
-
 }
 
 ListaCliente * searchCliente(unsigned int numconta,ListaCliente* lista){
@@ -859,11 +860,11 @@ int clienteComparator ( const void * cli1, const void * cli2 ){
 	Cliente * tcl1;
 	Cliente * tcl2;
 
-	if( tcl1 == NULL )
+	if( *(Cliente **) cli1 == NULL )
 		return 1;
-	else
-		if( tcl2 == NULL )
-			return -1;
+
+	if( *(Cliente **) cli2 == NULL )
+		return -1;
 
 	tcl1 = *(Cliente **) cli1;
 	tcl2 = *(Cliente **) cli2;

@@ -18,7 +18,6 @@
 /*
  *   TODO A definir
  *
- * - funcao para servir de thread
  * - TESTAR
  *
  *
@@ -27,11 +26,6 @@
 
 /*   TODO LIST Miguel
  *
- * - criar a struct request
- * - definir o protocolo de comunicacao
- * - criar funcoes de protocolo
- * 		- funcoes de cliente para mandar para o FIFO requests
- * - criar funcao de parce de pedido para a struct request
  * - modificar funcoes para usar request em vez de char[]
  * - modificar as funcoes para usar o array de clientes
  *
