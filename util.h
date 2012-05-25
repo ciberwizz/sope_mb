@@ -156,7 +156,7 @@ int sendRequest(Request *);
 //parse do pedido, chama funcao apropriada
 Request * parseRequest(char *);
 
-
+Response * processRequest(Request *, ListaCliente *);
 
 
 

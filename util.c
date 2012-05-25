@@ -663,7 +663,7 @@ Request * parseRequest(char *line){
 
 	//pid
 	ch = strtok(line," ");
-	sscanf(line,"%ld",&req->pid_cli);
+	sscanf(line,"%ld",(long*)&req->pid_cli);
 
 	//numConta
 	ch = strtok(ch," ");
@@ -720,7 +720,7 @@ Request * parseRequest(char *line){
 
 		//pin
 		ch = strtok(ch," ");
-		sscanf(ch,"%s",req->pin);
+		sscanf(ch,"%s",req->pin2);
 
 	} else
 	if(strcmp(tipo,"REMOVER") == 0) {
@@ -743,5 +743,119 @@ Request * parseRequest(char *line){
 
 }
 
+Response * processRequest(Request * request, ListaCliente *lista){
+	Response * response = (Response *) calloc(1, sizeof((Response *)));
 
+	switch(request->tipo ){
+
+			case CONSULTAR:
+				request->valor = consultarSaldo(request->numConta,request->pin, &lista );
+				if( request->valor < 0) {
+					sprintf(response->respOriginal, "ERROR Wrong Passwor/username.\n");
+					sprintf(response->status, "ERROR");
+					sprintf(response->msg, "Wrong Passwor/username.\n");
+				} else {
+
+					sprintf(response->respOriginal, "OK Saldo: %lf\n",request->valor);
+					sprintf(response->status, "OK");
+					sprintf(response->msg, "Saldo: %lf\n",request->valor);
+				}
+
+
+			 break;
+
+			case LEVANTAR:
+
+				if( levantarDinheiro(request->numConta,request->pin,request->valor,&lista) ){
+					sprintf(response->respOriginal, "OK Operacao bem sucedida.\n");
+					sprintf(response->status, "OK");
+					sprintf(response->msg, "Operacao bem sucedida.\n");
+				} else {
+					sprintf(response->respOriginal, "ERROR Sem fundos Suficientes ou Wrong Passwor/username.\n");
+					sprintf(response->status, "ERROR");
+					sprintf(response->msg, "Sem fundos Suficientes ou Wrong Passwor/username.\n");
+				}
+
+
+			 break;
+
+			case DEPOSITAR:
+
+				if(depositarDinheiro(request->numConta,request->pin,request->valor,&lista)){
+					sprintf(response->respOriginal, "OK Operacao bem sucedida.\n");
+					sprintf(response->status, "OK");
+					sprintf(response->msg, "Operacao bem sucedida.\n");
+				} else {
+					sprintf(response->respOriginal, "ERROR Wrong Passwor/username.\n");
+					sprintf(response->status, "ERROR");
+					sprintf(response->msg, "Wrong Passwor/username.\n");
+				}
+
+			 break;
+
+			case TRANSFERENCIA:
+				transferirDinheiro(request->numConta,request->pin,request->numConta2, request->valor,&lista)){
+					sprintf(response->respOriginal, "OK Operacao bem sucedida.\n");
+					sprintf(response->status, "OK");
+					sprintf(response->msg, "Operacao bem sucedida.\n");
+				} else {
+					sprintf(response->respOriginal, "ERROR Sem fundos Suficientes ou Wrong Passwor/username.\n");
+					sprintf(response->status, "ERROR");
+					sprintf(response->msg, "Sem fundos Suficientes ou Wrong Passwor/username.\n");
+				}
+
+			 break;
+
+			 // so para admin
+			case ADICIONAR:
+				if(request->numConta == 0 && login(request->numConta,request->pin,&(lista.cliente))){
+
+					request->numConta2 = addCliente(request->nome,request->pin2,&lista);
+					sprintf(response->respOriginal, "OK Atribuido com o numero de conta %u.\n",request->numConta2);
+					sprintf(response->status, "OK");
+					sprintf(response->msg, "Atribuido com o numero de conta %u.\n",request->numConta2);
+
+				} else {
+					sprintf(response->respOriginal, "ERROR Nao tem permicoes para esta operacao.\n");
+					sprintf(response->status, "ERROR");
+					sprintf(response->msg, "Nao tem permicoes para esta operacao.\n");
+				}
+
+
+			 break;
+			 // so para admin
+			case REMOVER:
+				if(request->numConta == 0 && login(request->numConta,request->pin,&(lista.cliente))){
+					request->numConta2 = removeCliente(request->numConta2 ,&lista);
+					sprintf(response->respOriginal, "OK Operacao bem sucedida.\n");
+					sprintf(response->status, "OK");
+					sprintf(response->msg, "Operacao bem sucedida.\n")
+
+				} else {
+					sprintf(response->respOriginal, "ERROR Nao tem permicoes para esta operacao.\n");
+					sprintf(response->status, "ERROR");
+					sprintf(response->msg, "Nao tem permicoes para esta operacao.\n");
+				}
+
+
+			 break;
+			 // so para admin
+			case LISTAR:
+				if(request->numConta == 0 && login(request->numConta,request->pin,&(lista.cliente))){
+					request->numConta2 = removeCliente(request->numConta2 ,&lista);
+					sprintf(response->respOriginal, "OK Lista em seguida.\n");
+					sprintf(response->status, "OK");
+					sprintf(response->msg, "Lista em seguida.\n");
+
+				} else {
+					sprintf(response->respOriginal, "ERROR Nao tem permicoes para esta operacao.\n");
+					sprintf(response->status, "ERROR");
+					sprintf(response->msg, "Nao tem permicoes para esta operacao.\n");
+				}
+
+
+			 break;
+		}
+	return response;
+}
 
