@@ -47,7 +47,7 @@
  */
 
 #define MAXCLIENTES 100000
-#define MAX_NUM_CLIENTES 10000000
+#define MAX_NUM_CLIENTES 100000
 #define FIFO_ANS "ans"
 #define FIFO_REQ "requests"
 
@@ -102,7 +102,8 @@ struct ListaCliente{
 bool login(unsigned int numconta,char pin[4],Cliente * cliente);
 
 //retorna o numero da conta com que o cliente fica ou zero em erro
-unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista/*,unsigned int ultimoNumconta*/);
+//unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista/*,unsigned int ultimoNumconta*/);
+unsigned int addCliente(char nome[20],char pin[4],arrCliente clienteArray);
 
 //remove um cliente e retorna o numero da conta se ocorreu com sucesso, zero se ocorreu erro
 unsigned int removeCliente(unsigned int numconta,ListaCliente* lista);
@@ -118,10 +119,14 @@ Cliente * stringToCliente(char* str);
 ListaCliente * searchCliente(unsigned int numconta,ListaCliente* lista);
 
 //listar todos os clientes e ir devolvendo strings obtidas pelos tostrings de cada cliente, a cada iteracao a listaCliente e actualizada
-ListaCliente * listarClientes(ListaCliente * lista,char* str);
+//ListaCliente * listarClientes(ListaCliente * lista,char* str);
+arrCliente listarClientes(arrCliente arrayCliente,char* str,int * i);
 
 //criar lista e o admin com numconta = 0
-int createListclient(ListaCliente *);
+//int createListclient(ListaCliente *);
+
+//criar arrayCliente com o admin com numconta = 0
+int createArrayclient(arrCliente array);
 
 bool levantarDinheiro(unsigned int numconta,char pinconta[4],int valor,ListaCliente* lista);
 bool depositarDinheiro(unsigned int numconta,char pinconta[4],int valor,ListaCliente* lista);

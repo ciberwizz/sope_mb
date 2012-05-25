@@ -13,7 +13,7 @@ bool login(unsigned int numconta,char pin[4],Cliente * cliente){
 
 }
 
-
+/*
 unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista){
 
      //aqui
@@ -56,6 +56,41 @@ unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista){
 
 
 }
+*/
+
+
+unsigned int addCliente(char nome[20],char pin[4],arrCliente clienteArray){
+
+    ultimoNumconta = ultimoNumconta + 1;
+    int i = 0;
+
+    //um cliente para o sizeof cliente
+    Cliente *novoCliente = (Cliente *) calloc(1,sizeof(Cliente));
+
+    strcpy(novoCliente->nome,nome);
+    novoCliente->numconta = ultimoNumconta;
+    strcpy (novoCliente->pin,pin);
+    novoCliente->saldo = 0;
+
+
+    while(clienteArray[i] != NULL && i < MAX_NUM_CLIENTES)
+        i++;
+
+    if(i < MAX_NUM_CLIENTES)
+        clienteArray[i] = novoCliente;
+    else
+    {
+        free(novoCliente);
+        return 0;
+    }
+
+
+    return ultimoNumconta;
+
+
+
+}
+
 
 unsigned int removeCliente(unsigned int numconta,ListaCliente* lista){
 
@@ -134,6 +169,10 @@ char * clienteToString(Cliente* cliente){
         return NULL;
     }
 
+    if(cliente == NULL)
+    {
+        return NULL;
+    }
 
     sprintf (nconta,"%07u", cliente->numconta);
 
@@ -174,6 +213,7 @@ Cliente * stringToCliente(char* str){
 
 
 //listar todos os clientes e ir devolvendo strings obtidas pelos tostrings de cada cliente, a cada iteracao a listaCliente e actualizada
+/*
 ListaCliente * listarClientes(ListaCliente * lista,char* str){
 
     if(lista == NULL)
@@ -191,7 +231,49 @@ ListaCliente * listarClientes(ListaCliente * lista,char* str){
 
 
 }
+*/
 
+arrCliente listarClientes(arrCliente arrayCliente,char* str,int * i)
+{
+
+    //TODO verificar se arraycliente e null e se o apontador para array cliente tb e null
+    int k =0;
+
+    if(*arrayCliente == NULL)
+    {
+        return NULL;
+    }
+
+    if(str == NULL)
+    {
+        return NULL;
+    }
+
+    if(i == NULL)
+    {
+        i = &k;
+
+    }else
+    {
+       *i += 1;
+    }
+
+    if(arrayCliente != NULL && *i < MAX_NUM_CLIENTES)
+    {
+        strcpy(str,clienteToString(arrayCliente[0]));
+        return &(arrayCliente[1]);
+
+    }else
+    {
+        return NULL;
+    }
+
+
+
+}
+
+
+/*
 //criar lista e o admin com numconta = 0
 int createListclient(ListaCliente * lista){
 
@@ -207,7 +289,33 @@ int createListclient(ListaCliente * lista){
 
     return ultimoNumconta;
 }
+*/
 
+int createArrayclient(arrCliente array){
+
+    Cliente * clienteA = (Cliente *) calloc(1,sizeof(Cliente));
+    ultimoNumconta = 0;
+    int i = 0;
+
+    clienteA->numconta = ultimoNumconta;
+    clienteA->saldo = 0;
+    strcpy(clienteA->nome,"admin");
+    strcpy(clienteA->pin,"1234");
+
+    //printf("hello1CriaArray\n");
+    array[i] = clienteA;
+    //printf("hello2CriaArray\n");
+
+    while(i++ < MAX_NUM_CLIENTES)
+    {
+        array[i] = NULL;
+    }
+
+    //printf("UltimoNumconta: %d\n",ultimoNumconta);
+    return ultimoNumconta;
+
+
+}
 
 
 bool levantarDinheiro(unsigned int numconta,char pinconta[4], int valor,ListaCliente* lista){
@@ -334,6 +442,7 @@ double consultarSaldo(unsigned int numconta,char pinconta[4],ListaCliente* lista
 
 
 bool escreveAcounts(ListaCliente *  lista){
+    /*
     ListaCliente * listaclient;
     bool result = false;
     FILE *file;
@@ -376,12 +485,13 @@ bool escreveAcounts(ListaCliente *  lista){
 	fclose(file);
 	return result;
 
-
+*/
 
 }
 
 //ignora a primeira linha pois contem o numconta do ultimo jogador registado
 bool lerAcounts(ListaCliente * listaler){
+    /*
     char mystring [100];
     bool result = true;
     Cliente *  clienteA = (Cliente * ) malloc(sizeof(Cliente));
@@ -424,7 +534,7 @@ bool lerAcounts(ListaCliente * listaler){
 
     fclose(file);
     return result;
-
+*/
 }
 
 //cria o ficheiro com a primeira linha como data hora programa operacao
