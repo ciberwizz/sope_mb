@@ -35,7 +35,7 @@ int main() {
 	fifo = createFifo(FIFO_REQ);
 
 	//verifica se já existem clientes no ficheiro
-	if( !lerAcounts(&lista) )
+	if( !lerAcounts(lcliente) )
 		createArrayclient(lcliente);
 
 
@@ -122,20 +122,20 @@ void * trataResp( void* str){
 
 
 void debugIni() {
-	createListclient(&lista);
-	addCliente("nelson","1234",&lista);
-	addCliente("Miguel","5678",&lista);
-	addCliente("Da","1656",&lista);
-	addCliente("Costa","2465",&lista);
-	addCliente("Martins","8714",&lista);
-	addCliente("Pereira","9832",&lista);
-	addCliente("Miguel","4164",&lista);
-	addCliente("Marcos","9165",&lista);
-	addCliente("Juliana","6519",&lista);
-	addCliente("Joao","9720",&lista);
-	addCliente("Joana","1642",&lista);
+	createArrayclient(lcliente);
+	addCliente("nelson","1234",lcliente);
+	addCliente("Miguel","5678",lcliente);
+	addCliente("Da","1656",lcliente);
+	addCliente("Costa","2465",lcliente);
+	addCliente("Martins","8714",lcliente);
+	addCliente("Pereira","9832",lcliente);
+	addCliente("Miguel","4164",lcliente);
+	addCliente("Marcos","9165",lcliente);
+	addCliente("Juliana","6519",lcliente);
+	addCliente("Joao","9720",lcliente);
+	addCliente("Joana","1642",lcliente);
 
-	escreveAcounts(&lista);
+	escreveAcounts(lcliente);
 }
 
 
