@@ -20,6 +20,7 @@ void * trataResp( void*);
 int main() {
 	int fifo;
 	char str[1024];
+	char *thread;
 	pthread_t th;
 	pthread_attr_t th_attr;
 
@@ -39,55 +40,79 @@ int main() {
 
 
 	do{
+		memset(str,0,1024);
+
 
 		if(readFifo(FIFO_REQ,0,str) == NULL)
 			break;
 
+		thread = (char *) calloc(1024,sizeof(char));
+		strcat(thread,str);
+
 		if(strcmp(str,"shutdown")==0)
 			break;
 
-		pthread_create(&th, &th_attr, trataResp,str);
+		pthread_create(&th, &th_attr, trataResp,thread);
 		nth++;
 
 	}while(1);
 
 
 
+	remove("requests");
+	pthread_exit(NULL);
 
-pthread_exit(NULL);
 
-remove("requests");
 }
 
 void * trataResp( void* str){
-	int ret, id;
+	int ret, i, id = (int) pthread_self();
 	ListaCliente *lcl;
 	Cliente *cl;
 	Response *response;
-
+	char fifo[10], temp[1024];
+	char * tmp;
+	char * tmp2;
 	Request * request = parseRequest(str);
 
-	//TODO falta por os mutexes..
-	response = processRequest(request,&lista);
-	//TODO mandas as responses. SE LISTA é diferente!!!
-
-	/*
 	pthread_mutex_lock(&mlista);
-	ret = addCliente(req,"1234",&clientes);
+	response = processRequest(request,&lista);
 	pthread_mutex_unlock(&mlista);
 
-	sscanf(req,"%d",&id);
-	sprintf(resp,"%d OK\n",id);
+	sprintf(fifo, "ans%d",(int) request->pid_cli);
 
-	ret = rand()%3+2;
-	sleep(ret);
-	printf("sleep=%d; ",ret);
+	writeFifo(fifo,response->respOriginal);
 
-	usleep(500);
-	ret =writeFifo(FIFO_ANS,resp);
-	//if(!ret)
-		printf("ret=%d a tentar a por a resposta: %s",ret,resp);
-	 */
+	lcl = &lista;
+
+	if(request->tipo == LISTAR && strcmp(response->status, "OK") == 0){
+
+		usleep(100*1000); //10ms
+		while(lcl != NULL){
+			memset(response->respOriginal,0,128);
+			memset(temp,0,1024);
+			i=1;
+			pthread_mutex_lock(&mlista);
+			lcl = listarClientes(lcl,temp);
+			pthread_mutex_unlock(&mlista);
+
+			tmp = strtok(temp," ");
+			do {
+				if(i++ != 3) {
+					strcat(response->respOriginal," ");
+					strcat(response->respOriginal,tmp);
+				}
+				tmp = strtok(NULL," ");
+			}while(tmp != NULL);
+			writeFifo(fifo,response->respOriginal);
+			usleep(100*1000); //10ms
+		}
+		writeFifo(fifo,"end\0");
+	}
+
+	free(str);
+	free(response);
+	free(request);
 	return NULL;
 
 }

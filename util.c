@@ -210,7 +210,7 @@ int createListclient(ListaCliente * lista){
 
 
 
-bool levantarDinheiro(unsigned int numconta,char pinconta[4], int valor,ListaCliente* lista){
+bool levantarDinheiro(unsigned int numconta,char pinconta[4], double valor,ListaCliente* lista){
     bool result = false;
     bool resultLogin = false;
     ListaCliente* lista1;
@@ -246,7 +246,7 @@ bool levantarDinheiro(unsigned int numconta,char pinconta[4], int valor,ListaCli
 
 }
 
-bool depositarDinheiro(unsigned int numconta,char pinconta[4],int valor,ListaCliente * lista){
+bool depositarDinheiro(unsigned int numconta,char pinconta[4],double valor,ListaCliente * lista){
     bool result = false;
     bool resultLogin = false;
     ListaCliente* lista1;
@@ -511,13 +511,7 @@ char* readFifo(char* path, int timeout, char* buff){
 
 	ret = read(fifo, buff, 1024);
 
-
-
-
 	close(fifo);
-
-
-	printf("readFIFO ret = %d\n",ret);
 
 
 	if(ret < 0) {
@@ -658,25 +652,28 @@ Request * parseRequest(char *line){
 	Request *req = (Request *) calloc(1,sizeof(Request));
 	char * ch;
 	char tipo[128];
+	int i=0;
 
 	strcpy(req->pedidoOriginal,line);
 
 	//pid
 	ch = strtok(line," ");
-	sscanf(line,"%ld",(long*)&req->pid_cli);
+	sscanf(ch,"%d",&i);
+	req->pid_cli = i;
+	i= 0;
 
 	//numConta
-	ch = strtok(ch," ");
+	ch = strtok(NULL," ");
 	sscanf(ch,"%u",&req->numConta);
 
 	//pin
-	ch = strtok(ch," ");
+	ch = strtok(NULL," ");
 	sscanf(ch,"%s",req->pin);
 
-
 	//tipo
-	ch = strtok(ch," ");
+	ch = strtok(NULL," ");
 	sscanf(ch,"%s",tipo);
+
 
 	if(strcmp(tipo,"CONSULTAR") == 0){
 		req->tipo = CONSULTAR;
@@ -686,7 +683,7 @@ Request * parseRequest(char *line){
 		req->tipo = LEVANTAR;
 
 		//valor
-		ch = strtok(ch," ");
+		ch = strtok(NULL," ");
 		sscanf(ch,"%lf",&req->valor);
 	} else
 
@@ -694,19 +691,20 @@ Request * parseRequest(char *line){
 		req->tipo = DEPOSITAR;
 
 		//valor
-		ch = strtok(ch," ");
+		ch = strtok(NULL," ");
 		sscanf(ch,"%lf",&req->valor);
+		printf("valor a depositar: %lf\n",req->valor);
 	} else
 
 	if(strcmp(tipo,"TRANSFERENCIA") == 0) {
 		req->tipo = TRANSFERENCIA;
 
 		//valor
-		ch = strtok(ch," ");
+		ch = strtok(NULL," ");
 		sscanf(ch,"%lf",&req->valor);
 
 		//para onde
-		ch = strtok(ch," ");
+		ch = strtok(NULL," ");
 		sscanf(ch,"%u",&req->numConta2);
 
 	} else
@@ -715,11 +713,11 @@ Request * parseRequest(char *line){
 		req->tipo = ADICIONAR;
 
 		//nome
-		ch = strtok(ch," ");
+		ch = strtok(NULL," ");
 		sscanf(ch,"%s",req->nome);
 
 		//pin
-		ch = strtok(ch," ");
+		ch = strtok(NULL," ");
 		sscanf(ch,"%s",req->pin2);
 
 	} else
@@ -728,15 +726,16 @@ Request * parseRequest(char *line){
 		req->tipo = REMOVER;
 
 		//numconta2
-		ch = strtok(ch," ");
+		ch = strtok(NULL," ");
 		sscanf(ch,"%u",&req->numConta2);
 
 	} else
 	if(strcmp(tipo,"LISTAR") == 0) {
 		req->tipo = LISTAR;
-	} else
-
+	} else{
+		puts("ERRO NO PARSE");
 		return NULL;
+	}
 
 
 	return req;
@@ -744,73 +743,76 @@ Request * parseRequest(char *line){
 }
 
 Response * processRequest(Request * request, ListaCliente *lista){
-	Response * response = (Response *) calloc(1, sizeof((Response *)));
+	Response * response = (Response *) calloc(1, sizeof(Response) );
 
 	switch(request->tipo ){
 
 			case CONSULTAR:
-				request->valor = consultarSaldo(request->numConta,request->pin, &lista );
+				request->user = CLIENTE;
+				request->valor = consultarSaldo(request->numConta,request->pin, lista );
 				if( request->valor < 0) {
-					sprintf(response->respOriginal, "ERROR Wrong Passwor/username.\n");
+					sprintf(response->respOriginal, "ERROR Wrong Password/username.\n");
 					sprintf(response->status, "ERROR");
-					sprintf(response->msg, "Wrong Passwor/username.\n");
+					sprintf(response->msg, "Wrong Password/username.\n");
 				} else {
 
-					sprintf(response->respOriginal, "OK Saldo: %lf\n",request->valor);
+					sprintf(response->respOriginal, "OK Saldo: %.2lf\n",request->valor);
 					sprintf(response->status, "OK");
-					sprintf(response->msg, "Saldo: %lf\n",request->valor);
+					sprintf(response->msg, "Saldo: %.2lf\n",request->valor);
 				}
 
 
 			 break;
 
 			case LEVANTAR:
-
-				if( levantarDinheiro(request->numConta,request->pin,request->valor,&lista) ){
+				request->user = CLIENTE;
+				if( levantarDinheiro(request->numConta,request->pin,request->valor,lista) ){
 					sprintf(response->respOriginal, "OK Operacao bem sucedida.\n");
 					sprintf(response->status, "OK");
 					sprintf(response->msg, "Operacao bem sucedida.\n");
 				} else {
-					sprintf(response->respOriginal, "ERROR Sem fundos Suficientes ou Wrong Passwor/username.\n");
+					sprintf(response->respOriginal, "ERROR Sem fundos Suficientes ou Wrong Password/username.\n");
 					sprintf(response->status, "ERROR");
-					sprintf(response->msg, "Sem fundos Suficientes ou Wrong Passwor/username.\n");
+					sprintf(response->msg, "Sem fundos Suficientes ou Wrong Password/username.\n");
 				}
 
 
 			 break;
 
 			case DEPOSITAR:
-
-				if(depositarDinheiro(request->numConta,request->pin,request->valor,&lista)){
+				request->user = CLIENTE;
+				if(depositarDinheiro(request->numConta,request->pin,request->valor,lista)){
 					sprintf(response->respOriginal, "OK Operacao bem sucedida.\n");
 					sprintf(response->status, "OK");
 					sprintf(response->msg, "Operacao bem sucedida.\n");
 				} else {
-					sprintf(response->respOriginal, "ERROR Wrong Passwor/username.\n");
+					sprintf(response->respOriginal, "ERROR Wrong Password/username.\n");
 					sprintf(response->status, "ERROR");
-					sprintf(response->msg, "Wrong Passwor/username.\n");
+					sprintf(response->msg, "Wrong Password/username.\n");
 				}
 
 			 break;
 
 			case TRANSFERENCIA:
-				transferirDinheiro(request->numConta,request->pin,request->numConta2, request->valor,&lista)){
+				request->user = CLIENTE;
+				if( transferirDinheiro(request->numConta,request->pin,request->numConta2, request->valor,lista) ){
 					sprintf(response->respOriginal, "OK Operacao bem sucedida.\n");
 					sprintf(response->status, "OK");
 					sprintf(response->msg, "Operacao bem sucedida.\n");
 				} else {
-					sprintf(response->respOriginal, "ERROR Sem fundos Suficientes ou Wrong Passwor/username.\n");
+					sprintf(response->respOriginal, "ERROR Sem fundos Suficientes ou Wrong Password/username.\n");
 					sprintf(response->status, "ERROR");
-					sprintf(response->msg, "Sem fundos Suficientes ou Wrong Passwor/username.\n");
+					sprintf(response->msg, "Sem fundos Suficientes ou Wrong Password/username.\n");
 				}
 
 			 break;
 
 			 // so para admin
 			case ADICIONAR:
-				if(request->numConta == 0 && login(request->numConta,request->pin,&(lista.cliente))){
+				request->user = ADMIN;
+				if(request->numConta == 0 && login(request->numConta,request->pin,&(lista->cliente)) ){
 
-					request->numConta2 = addCliente(request->nome,request->pin2,&lista);
+					request->numConta2 = addCliente(request->nome,request->pin2,lista);
 					sprintf(response->respOriginal, "OK Atribuido com o numero de conta %u.\n",request->numConta2);
 					sprintf(response->status, "OK");
 					sprintf(response->msg, "Atribuido com o numero de conta %u.\n",request->numConta2);
@@ -825,11 +827,12 @@ Response * processRequest(Request * request, ListaCliente *lista){
 			 break;
 			 // so para admin
 			case REMOVER:
-				if(request->numConta == 0 && login(request->numConta,request->pin,&(lista.cliente))){
-					request->numConta2 = removeCliente(request->numConta2 ,&lista);
+				request->user = ADMIN;
+				if(request->numConta == 0 && login(request->numConta,request->pin,&(lista->cliente))){
+					request->numConta2 = removeCliente(request->numConta2 ,lista);
 					sprintf(response->respOriginal, "OK Operacao bem sucedida.\n");
 					sprintf(response->status, "OK");
-					sprintf(response->msg, "Operacao bem sucedida.\n")
+					sprintf(response->msg, "Operacao bem sucedida.\n");
 
 				} else {
 					sprintf(response->respOriginal, "ERROR Nao tem permicoes para esta operacao.\n");
@@ -841,8 +844,8 @@ Response * processRequest(Request * request, ListaCliente *lista){
 			 break;
 			 // so para admin
 			case LISTAR:
-				if(request->numConta == 0 && login(request->numConta,request->pin,&(lista.cliente))){
-					request->numConta2 = removeCliente(request->numConta2 ,&lista);
+				request->user = ADMIN;
+				if(request->numConta == 0 && login(request->numConta,request->pin,&(lista->cliente))){
 					sprintf(response->respOriginal, "OK Lista em seguida.\n");
 					sprintf(response->status, "OK");
 					sprintf(response->msg, "Lista em seguida.\n");
@@ -856,6 +859,7 @@ Response * processRequest(Request * request, ListaCliente *lista){
 
 			 break;
 		}
+
 	return response;
 }
 

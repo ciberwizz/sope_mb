@@ -72,12 +72,11 @@ void interface(){
 
 			printf("Qual o nome do novo Cliente? ");
 			__fpurge(stdin);
-			fgets(req.nome,20,stdin);
-
+			scanf(" %20s", req.nome);
 
 			printf("\nQual o pin do novo Cliente? ");
 			__fpurge(stdin);
-			fgets(req.pin2,4,stdin);
+			scanf(" %4s", req.pin2);
 			break;
 
 		//remover
@@ -106,6 +105,7 @@ void interface(){
 
 			if( writeFifo(FIFO_REQ,"shutdown")<1 )
 				printf("ERRO ao mandar comando");
+			remove(fifo);
 
 			return;
 
@@ -114,6 +114,7 @@ void interface(){
 //		printf("Sair?                (s)\n");
 		case 's':
 		case 'S':
+			remove(fifo);
 			return;
 			break;
 
@@ -129,44 +130,47 @@ void interface(){
 			} else {
 				sprintf(fifo,"%s%ld",FIFO_ANS,(long) req.pid_cli);
 
-				if(req.tipo != LISTAR) {
 
-					if(readFifo(fifo,3,resp.respOriginal) == NULL){
-						printf("ERRO: Unable to get response from server\n");
+
+				if(readFifo(fifo,3,resp.respOriginal) == NULL)
+					printf("ERRO: Unable to get response from server\n");
+				 else {
+
+					//faz parce da resposta e poe os resultados nas variaveis
+					//exp. "ERROR Sem fundos suficientes\n"
+					// status = "ERROR", strError = "Sem fundos suficientes\n"
+					sscanf(resp.respOriginal,"%s %[^\n]s",resp.status, resp.msg);
+					if(strcmp(resp.status, "OK") == 0)
+						printf("Operacao realizada com sucesso. \nResposta: %s\n",resp.msg);
+					else
+						printf("Erro na operacao: %s\n",resp.msg);
+
+
+
+					if(req.tipo != LISTAR || strcmp(resp.status,"OK") != 0 ){
 						remove(fifo);
 						return;
 					} else {
+
+						puts("lista de clientes:");
+
+						do {
+							memset(resp.respOriginal,0,128);
+							if(readFifo(fifo,0,resp.respOriginal) == NULL){
+								printf("ERRO: Unable to get response from server\n");
+								break;
+							}
+
+							printf("%s\n",resp.respOriginal);
+						}while(strcmp( resp.respOriginal, "end") != 0);
+
+						puts("FIM DA LISTA");
 						remove(fifo);
-						//faz parce da resposta e poe os resultados nas variaveis
-						//exp. "ERROR Sem fundos suficientes\n"
-						// status = "ERROR", strError = "Sem fundos suficientes\n"
-						sscanf(resp.respOriginal,"%s %[^\n]s",resp.status, resp.msg);
-						if(strcmp(resp.status, "OK") == 0){
-							printf("Operacao realizada com sucesso. Resposta: %s\n",resp.msg);
-							return;
-						} else {
-							printf("Erro na operacao: %s\n",resp.msg);
-							return;
-						}
+						return;
+
+
 					}
-				} else {
-
-					puts("lista de clientes:");
-
-					do {
-						if(readFifo(fifo,3,resp.respOriginal) == NULL){
-							printf("ERRO: Unable to get response from server\n");
-							remove(fifo);
-							return;
-						}
-
-						printf("%s",resp.respOriginal);
-					}while(strcmp( resp.respOriginal, "end") != 0);
-
-					return
-
-
-				}
+				 }
 
 
 

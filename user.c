@@ -129,16 +129,6 @@ void interface(){
 		case 'S':
 			return;
 			break;
-			//TODO PARA TESTES
-		case 'a': //adicionar
-			req.tipo = ADICIONAR;
-			strcpy(req.nome, "2314");
-			strcpy(req.pin2, "2314");
-			break;
-		case 'r':
-			req.tipo = REMOVER;
-			req.numConta2 = 123445;
-			break;
 		default:
 			req.tipo = INVALID;
 			break;
@@ -185,8 +175,7 @@ void interface(){
 						printf("%s",resp.respOriginal);
 					}while(strcmp( resp.respOriginal, "end") != 0);
 
-					return
-
+					return;
 
 				}
 

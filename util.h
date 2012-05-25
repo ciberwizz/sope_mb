@@ -123,8 +123,8 @@ ListaCliente * listarClientes(ListaCliente * lista,char* str);
 //criar lista e o admin com numconta = 0
 int createListclient(ListaCliente *);
 
-bool levantarDinheiro(unsigned int numconta,char pinconta[4],int valor,ListaCliente* lista);
-bool depositarDinheiro(unsigned int numconta,char pinconta[4],int valor,ListaCliente* lista);
+bool levantarDinheiro(unsigned int numconta,char pinconta[4],double valor,ListaCliente* lista);
+bool depositarDinheiro(unsigned int numconta,char pinconta[4],double valor,ListaCliente* lista);
 bool transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numconta2,int valor,ListaCliente* lista);
 double consultarSaldo(unsigned int numconta,char pinconta[4],ListaCliente* lista);
 bool escreveAcounts(ListaCliente *  lista);
