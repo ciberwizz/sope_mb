@@ -109,7 +109,7 @@ char * clienteToString(Cliente* cliente);
 //recebe a linha obtida no accounts.txt e transforma num cliente, sera usada em leraccounts
 Cliente * stringToCliente(char* str);
 
-
+//TODO DEIXA DE SER USADO
 //retorna a lista onde um determinado cliente se encontra, else retorna null
 ListaCliente * searchCliente(unsigned int numconta,ListaCliente* lista);
 
@@ -159,7 +159,7 @@ int sendRequest(Request *);
 //parse do pedido, chama funcao apropriada
 Request * parseRequest(char *);
 
-Response * processRequest(Request *, ListaCliente *);
+Response * processRequest(Request *, arrCliente );
 
 
 

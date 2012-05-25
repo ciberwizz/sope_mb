@@ -168,6 +168,7 @@ unsigned int removeCliente(unsigned int numconta,arrCliente clienteArray){
     return numconta;
 }
 
+
 ListaCliente * searchCliente(unsigned int numconta,ListaCliente* lista){
 
     while(lista->cliente.numconta != numconta)
@@ -273,27 +274,22 @@ ListaCliente * listarClientes(ListaCliente * lista,char* str){
 arrCliente listarClientes(arrCliente arrayCliente,char* str,int * i)
 {
 
-    //TODO verificar se arraycliente e null e se o apontador para array cliente tb e null
     int k =0;
 
+    if(arrayCliente == NULL)
+		return NULL;
+
     if(*arrayCliente == NULL)
-    {
         return NULL;
-    }
 
     if(str == NULL)
-    {
         return NULL;
-    }
 
     if(i == NULL)
-    {
         i = &k;
 
-    }else
-    {
+    else
        *i += 1;
-    }
 
     if(arrayCliente != NULL && *i < MAX_NUM_CLIENTES)
     {
@@ -301,12 +297,7 @@ arrCliente listarClientes(arrCliente arrayCliente,char* str,int * i)
         return &(arrayCliente[1]);
 
     }else
-    {
         return NULL;
-    }
-
-
-
 }
 
 
@@ -1035,7 +1026,7 @@ Request * parseRequest(char *line){
 
 }
 
-Response * processRequest(Request * request, ListaCliente *lista){
+Response * processRequest(Request * request, arrCliente lista){
 	Response * response = (Response *) calloc(1, sizeof(Response) );
 
 	switch(request->tipo ){
@@ -1103,7 +1094,7 @@ Response * processRequest(Request * request, ListaCliente *lista){
 			 // so para admin
 			case ADICIONAR:
 				request->user = ADMIN;
-				if(request->numConta == 0 && login(request->numConta,request->pin,&(lista->cliente)) ){
+				if(request->numConta == 0 && login(request->numConta,request->pin,lista[0]) ){
 
 					request->numConta2 = addCliente(request->nome,request->pin2,lista);
 					sprintf(response->respOriginal, "OK Atribuido com o numero de conta %u.\n",request->numConta2);
@@ -1121,7 +1112,7 @@ Response * processRequest(Request * request, ListaCliente *lista){
 			 // so para admin
 			case REMOVER:
 				request->user = ADMIN;
-				if(request->numConta == 0 && login(request->numConta,request->pin,&(lista->cliente))){
+				if(request->numConta == 0 && login(request->numConta,request->pin,lista[0])){
 					request->numConta2 = removeCliente(request->numConta2 ,lista);
 					sprintf(response->respOriginal, "OK Operacao bem sucedida.\n");
 					sprintf(response->status, "OK");
@@ -1138,7 +1129,7 @@ Response * processRequest(Request * request, ListaCliente *lista){
 			 // so para admin
 			case LISTAR:
 				request->user = ADMIN;
-				if(request->numConta == 0 && login(request->numConta,request->pin,&(lista->cliente))){
+				if(request->numConta == 0 && login(request->numConta,request->pin,lista[0])){
 					sprintf(response->respOriginal, "OK Lista em seguida.\n");
 					sprintf(response->status, "OK");
 					sprintf(response->msg, "Lista em seguida.\n");
