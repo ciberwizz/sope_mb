@@ -83,6 +83,7 @@ unsigned int removeCliente(unsigned int numconta,arrCliente clienteArray){
     return numconta;
 }
 
+
 ListaCliente * searchCliente(unsigned int numconta,ListaCliente* lista){
 
     while(lista->cliente.numconta != numconta)
@@ -167,27 +168,22 @@ Cliente * stringToCliente(char* str){
 arrCliente listarClientes(arrCliente arrayCliente,char* str,int * i)
 {
 
-    //TODO verificar se arraycliente e null e se o apontador para array cliente tb e null
     int k =0;
 
+    if(arrayCliente == NULL)
+		return NULL;
+
     if(*arrayCliente == NULL)
-    {
         return NULL;
-    }
 
     if(str == NULL)
-    {
         return NULL;
-    }
 
     if(i == NULL)
-    {
         i = &k;
 
-    }else
-    {
+    else
        *i += 1;
-    }
 
     if(arrayCliente != NULL && *i < MAX_NUM_CLIENTES)
     {
@@ -195,12 +191,7 @@ arrCliente listarClientes(arrCliente arrayCliente,char* str,int * i)
         return &(arrayCliente[1]);
 
     }else
-    {
         return NULL;
-    }
-
-
-
 }
 
 
@@ -750,10 +741,10 @@ bool actualizaLog(Request * request,Response * response){
     struct tm tm = *localtime(&t);
 
 
-
+    //se nao existir cria e abre para escrita com modo append
     iniciaLog();
 
-    file = fopen("logfile.txt", "a+");//se nao existir cria e abre para escrita com modo append
+    file = fopen("logfile.txt", "a+");
 
     printf("response\n");
 
@@ -828,7 +819,7 @@ bool actualizaLog(Request * request,Response * response){
         }
 
         pid = request->pid_cli;
-        fprintf(file,"   %02d-%02d-%02d     %02d:%02d:%02d   %s pid=%d  %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,programa,(int)pid,operacao);
+        fprintf(file,"   %02d-%02d-%02d     %02d:%02d:%02d   %s Cliente(pid=%d)  %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,programa,(int)pid,operacao);
         //fprintf(file,"   DATA     HORA   PROGRAM pid=pid   OPERACAO\n");
         result = true;
     }else
@@ -843,7 +834,7 @@ bool actualizaLog(Request * request,Response * response){
             pid = request->pid_cli;
             strcpy(programa,"SERVER");
             strcpy(operacao,response->msg);
-            fprintf(file,"   %02d-%02d-%02d     %02d:%02d:%02d   %s pid=%d  %s %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,programa,(int)pid,operacao,mensagem);
+            fprintf(file,"   %02d-%02d-%02d     %02d:%02d:%02d   %s Cliente(pid=%d)  %s %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,programa,(int)pid,operacao,mensagem);
             result = false;
         }else
         {
@@ -853,7 +844,7 @@ bool actualizaLog(Request * request,Response * response){
             pid = request->pid_cli;
             strcpy(programa,"SERVER");
             strcpy(operacao,mensagem);
-            fprintf(file,"   %02d-%02d-%02d     %02d:%02d:%02d   %s pid=%d  %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,programa,(int)pid,operacao);
+            fprintf(file,"   %02d-%02d-%02d     %02d:%02d:%02d   %s Cliente(pid=%d)  %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,programa,(int)pid,operacao);
             result = true;
         }
 
@@ -1165,12 +1156,12 @@ Request * parseRequest(char *line){
 		return NULL;
 	}
 
-
+	actualizaLog(req,NULL);
 	return req;
 
 }
 
-Response * processRequest(Request * request, ListaCliente *lista){
+Response * processRequest(Request * request, arrCliente lista){
 	Response * response = (Response *) calloc(1, sizeof(Response) );
 
 	switch(request->tipo ){
@@ -1238,7 +1229,7 @@ Response * processRequest(Request * request, ListaCliente *lista){
 			 // so para admin
 			case ADICIONAR:
 				request->user = ADMIN;
-				if(request->numConta == 0 && login(request->numConta,request->pin,&(lista->cliente)) ){
+				if(request->numConta == 0 && login(request->numConta,request->pin,lista[0]) ){
 
 					request->numConta2 = addCliente(request->nome,request->pin2,lista);
 					sprintf(response->respOriginal, "OK Atribuido com o numero de conta %u.\n",request->numConta2);
@@ -1256,7 +1247,7 @@ Response * processRequest(Request * request, ListaCliente *lista){
 			 // so para admin
 			case REMOVER:
 				request->user = ADMIN;
-				if(request->numConta == 0 && login(request->numConta,request->pin,&(lista->cliente))){
+				if(request->numConta == 0 && login(request->numConta,request->pin,lista[0])){
 					request->numConta2 = removeCliente(request->numConta2 ,lista);
 					sprintf(response->respOriginal, "OK Operacao bem sucedida.\n");
 					sprintf(response->status, "OK");
@@ -1273,7 +1264,7 @@ Response * processRequest(Request * request, ListaCliente *lista){
 			 // so para admin
 			case LISTAR:
 				request->user = ADMIN;
-				if(request->numConta == 0 && login(request->numConta,request->pin,&(lista->cliente))){
+				if(request->numConta == 0 && login(request->numConta,request->pin,lista[0])){
 					sprintf(response->respOriginal, "OK Lista em seguida.\n");
 					sprintf(response->status, "OK");
 					sprintf(response->msg, "Lista em seguida.\n");
@@ -1287,6 +1278,8 @@ Response * processRequest(Request * request, ListaCliente *lista){
 
 			 break;
 		}
+
+	actualizaLog(request,response);
 
 	return response;
 }

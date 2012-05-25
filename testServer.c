@@ -9,7 +9,7 @@
 
 ListaCliente lista;
 
-Cliente *cliente[MAXCLIENTES];
+Cliente *lcliente[MAX_NUM_CLIENTES];
 
 void debugIni();
 
@@ -36,7 +36,7 @@ int main() {
 
 	//verifica se já existem clientes no ficheiro
 	if( !lerAcounts(&lista) )
-		createListclient(&lista);
+		createArrayclient(lcliente);
 
 
 	do{
@@ -66,8 +66,8 @@ int main() {
 }
 
 void * trataResp( void* str){
-	int ret, i, id = (int) pthread_self();
-	ListaCliente *lcl;
+	int ret, i, n;
+	arrCliente lcl;
 	Cliente *cl;
 	Response *response;
 	char fifo[10], temp[1024];
@@ -76,24 +76,25 @@ void * trataResp( void* str){
 	Request * request = parseRequest(str);
 
 	pthread_mutex_lock(&mlista);
-	response = processRequest(request,&lista);
+	response = processRequest(request,lcliente);
 	pthread_mutex_unlock(&mlista);
 
 	sprintf(fifo, "ans%d",(int) request->pid_cli);
 
 	writeFifo(fifo,response->respOriginal);
 
-	lcl = &lista;
+	lcl = lcliente;
 
 	if(request->tipo == LISTAR && strcmp(response->status, "OK") == 0){
-
+		n=0;
 		usleep(100*1000); //10ms
 		while(lcl != NULL){
 			memset(response->respOriginal,0,128);
 			memset(temp,0,1024);
 			i=1;
+
 			pthread_mutex_lock(&mlista);
-			lcl = listarClientes(lcl,temp);
+			lcl = listarClientes(lcl,temp,&n);
 			pthread_mutex_unlock(&mlista);
 
 			tmp = strtok(temp," ");
