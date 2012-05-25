@@ -13,52 +13,6 @@ bool login(unsigned int numconta,char pin[4],Cliente * cliente){
 
 }
 
-/*
-unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista){
-
-     //aqui
-    ultimoNumconta = ultimoNumconta + 1;
-    //end aqui
-    Cliente *novoCliente;
-    ListaCliente* listaNova = (ListaCliente*) malloc(sizeof(ListaCliente));
-    novoCliente = &(listaNova->cliente);//e como se fosse um atalho, qualquer alteracao a novoCliente afecta o cliente de listaNova
-
-
-    while(lista != NULL)
-    {
-        if(lista->next == NULL)
-        {
-            break;
-        }
-
-        if(lista->next !=NULL)
-        {
-            lista = lista->next;
-        }
-
-    }
-
-    strcpy (novoCliente->nome,nome);
-    novoCliente->numconta = ultimoNumconta;
-
-    strcpy (novoCliente->pin,pin);
-    novoCliente->saldo = 0;
-
-    listaNova->next = NULL;
-    listaNova->pid = 0;
-    listaNova->prev = lista;
-
-
-    lista->next = listaNova;
-
-
-    return novoCliente->numconta;
-
-
-}
-*/
-
-
 unsigned int addCliente(char nome[20],char pin[4],arrCliente clienteArray){
 
     ultimoNumconta = ultimoNumconta + 1;
@@ -91,49 +45,10 @@ unsigned int addCliente(char nome[20],char pin[4],arrCliente clienteArray){
 
 }
 
-/*
-unsigned int removeCliente(unsigned int numconta,ListaCliente* lista){
 
-
-    while(lista->cliente.numconta != numconta)
-    {
-
-        lista = lista->next;
-
-        if(lista == NULL)
-        {
-            break;
-        }
-    }
-
-
-
-
-
-    if(numconta == 0)
-    {
-        printf("Erro, esta a tentar remover o admin\n");
-        return 0;
-    }
-
-    if(lista->cliente.numconta != numconta)
-    {
-        return 0;
-    }else {
-
-        lista->prev->next = lista->next;
-        if(lista->next != NULL)
-            lista->next->prev = lista->prev;
-
-        free(lista);
-
-        return numconta;
-    }
-}*/
 
 unsigned int removeCliente(unsigned int numconta,arrCliente clienteArray){
 
-//TODO bug no remove -> segfault
     int i = 0;
     int k = 0;
     int acum = 0;
@@ -249,27 +164,6 @@ Cliente * stringToCliente(char* str){
 }
 
 
-//listar todos os clientes e ir devolvendo strings obtidas pelos tostrings de cada cliente, a cada iteracao a listaCliente e actualizada
-/*
-ListaCliente * listarClientes(ListaCliente * lista,char* str){
-
-    if(lista == NULL)
-    {
-        return NULL;
-    }else
-
-    {
-        strcpy(str,clienteToString(&(lista->cliente)));
-        lista = lista->next;
-        return lista;
-    }
-
-
-
-
-}
-*/
-
 arrCliente listarClientes(arrCliente arrayCliente,char* str,int * i)
 {
 
@@ -310,23 +204,6 @@ arrCliente listarClientes(arrCliente arrayCliente,char* str,int * i)
 }
 
 
-/*
-//criar lista e o admin com numconta = 0
-int createListclient(ListaCliente * lista){
-
-    ultimoNumconta = 0;
-
-    lista->cliente.numconta = ultimoNumconta;
-    lista->cliente.saldo = 0;
-    strcpy(lista->cliente.nome,"admin");
-    strcpy(lista->cliente.pin,"1234");
-
-    lista->prev = NULL;
-    lista->next = NULL;
-
-    return ultimoNumconta;
-}
-*/
 
 int createArrayclient(arrCliente array){
 
@@ -354,7 +231,7 @@ int createArrayclient(arrCliente array){
 
 }
 
-
+/*
 bool levantarDinheiro(unsigned int numconta,char pinconta[4], double valor,ListaCliente* lista){
     bool result = false;
     bool resultLogin = false;
@@ -390,7 +267,56 @@ bool levantarDinheiro(unsigned int numconta,char pinconta[4], double valor,Lista
     return result;
 
 }
+*/
 
+bool levantarDinheiro(unsigned int numconta,char pinconta[4],double valor,arrCliente clientesArray){
+    bool result = false;
+    bool resultLogin = false;
+    int k;
+    Cliente * clienteA;
+
+    for(k = 0; k < MAX_NUM_CLIENTES;k++)
+        if(clientesArray[k] == NULL)
+            break;
+
+
+    clienteA =  bsearchClient(clientesArray,k, numconta);
+
+
+    if(clienteA == NULL)
+        return false;
+    else
+    {
+        resultLogin = login(numconta,pinconta,clienteA);
+        if(resultLogin == true)
+        {
+            if(clienteA->saldo >= valor)
+            {
+                clienteA->saldo = clienteA->saldo - valor;
+                result = true;
+            }else
+            {
+                result = false;
+            }
+
+        }else
+        {
+            result = false;
+        }
+    }
+
+
+    return result;
+
+
+
+
+}
+
+
+
+
+/*
 bool depositarDinheiro(unsigned int numconta,char pinconta[4],double valor,ListaCliente * lista){
     bool result = false;
     bool resultLogin = false;
@@ -417,8 +343,43 @@ bool depositarDinheiro(unsigned int numconta,char pinconta[4],double valor,Lista
     return result;
 
 }
+*/
+
+bool depositarDinheiro(unsigned int numconta,char pinconta[4],double valor,arrCliente clientesArray){
+    bool result = false;
+    bool resultLogin = false;
+    int k;
+    Cliente * clienteA;
+
+    for(k = 0; k < MAX_NUM_CLIENTES;k++)
+        if(clientesArray[k] == NULL)
+            break;
+
+    clienteA =  bsearchClient(clientesArray,k, numconta);
+
+    if(clienteA == NULL)
+        return false;
+    else
+    {
+        resultLogin = login(numconta,pinconta,clienteA);
+        if(resultLogin == true)
+        {
+            clienteA->saldo = clienteA->saldo + valor;
+            result = true;
+        }else
+        {
+            result = false;
+        }
+    }
 
 
+    return result;
+
+
+}
+
+
+/*
 bool transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numconta2,int valor,ListaCliente * lista){
     bool resultLogin = false;
     bool result = false;
@@ -450,8 +411,54 @@ bool transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numc
 
 
 }
+*/
+
+bool transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numconta2,int valor,arrCliente clientesArray){
+    int k;
+    bool resultLogin = false;
+    bool result = false;
+    Cliente * clienteA;
+    Cliente * clienteB;
+
+    for(k = 0; k < MAX_NUM_CLIENTES;k++)
+        if(clientesArray[k] == NULL)
+            break;
 
 
+    clienteA = bsearchClient(clientesArray,k,numconta);
+    clienteB = bsearchClient(clientesArray,k,numconta2);
+
+
+    if(clienteA != NULL && clienteB != NULL)
+    {
+        resultLogin = login(numconta,pinconta,clienteA);
+        if(resultLogin == true)
+        {
+            if(clienteA->saldo >= valor)
+            {
+                clienteA->saldo = clienteA->saldo - valor;
+                clienteB->saldo = clienteB->saldo + valor;
+                result = true;
+            }else
+            {
+                result = false;
+            }
+
+        }else
+        {
+            result = false;
+        }
+    }else
+    {
+        result = false;
+    }
+    return result;
+
+
+
+}
+
+/*
 double consultarSaldo(unsigned int numconta,char pinconta[4],ListaCliente* lista){
     double result;
     ListaCliente * lista1;
@@ -476,10 +483,44 @@ double consultarSaldo(unsigned int numconta,char pinconta[4],ListaCliente* lista
 
     return result;
 }
+*/
+
+double consultarSaldo(unsigned int numconta,char pinconta[4],arrCliente clientesArray){
+    int k;
+    double result;
+    Cliente * clienteA;
+    bool resultLogin;
+
+    for(k = 0; k < MAX_NUM_CLIENTES;k++)
+        if(clientesArray[k] == NULL)
+            break;
+
+    clienteA = bsearchClient(clientesArray,k,numconta);
+
+    if(clienteA != NULL)
+    {
+        resultLogin = login(numconta,pinconta,clienteA);
+        if(resultLogin == true)
+        {
+            result = clienteA->saldo;
+        }else
+        {
+            return -1.0;
+        }
+    }else
+    {
+        return -1.0;
+    }
+
+    return result;
 
 
+
+}
+
+/*
 bool escreveAcounts(ListaCliente *  lista){
-    /*
+
     ListaCliente * listaclient;
     bool result = false;
     FILE *file;
@@ -522,13 +563,63 @@ bool escreveAcounts(ListaCliente *  lista){
 	fclose(file);
 	return result;
 
+
+
+}
 */
+
+bool escreveAcounts(arrCliente clientesArray){
+    int k;
+    int i = 0;
+    bool result = false;
+    FILE *file;
+    char str[128];
+    arrCliente temp;
+
+	if ( (file = fopen ( "accounts.txt", "r" ) ) != NULL )
+	{
+
+        remove("accounts.txt");
+        file = fopen("accounts.txt", "w");
+
+	}
+	else {
+
+		file = fopen("accounts.txt", "w");
+	}
+
+
+    //escrever na primeira linha o numconta do ultimo jogador registado
+    fprintf(file,"%07u\n",ultimoNumconta);
+
+    k = 0;
+    temp = clientesArray;
+
+    while(temp != NULL)
+    {
+        temp = listarClientes(temp,str,&k);
+        if(temp != NULL)
+            fprintf(file,"%s\n",str);
+
+    }
+
+
+
+
+    result = true;
+	fclose(file);
+	return result;
+
+
+
 
 }
 
+
+/*
 //ignora a primeira linha pois contem o numconta do ultimo jogador registado
 bool lerAcounts(ListaCliente * listaler){
-    /*
+
     char mystring [100];
     bool result = true;
     Cliente *  clienteA = (Cliente * ) malloc(sizeof(Cliente));
@@ -571,7 +662,51 @@ bool lerAcounts(ListaCliente * listaler){
 
     fclose(file);
     return result;
+
+}
 */
+
+bool lerAcounts(arrCliente clientesArray){
+    int i = 0;
+    int k;
+    char mystring [100];
+    bool result = true;
+    Cliente *  clienteA = (Cliente * ) malloc(sizeof(Cliente));
+    FILE *file;
+
+	if ( (file = fopen ( "accounts.txt", "r" ) ) != NULL )
+	{
+	    fgets (mystring , 100 , file);//para passar a primeira linha a frente
+	    sscanf(mystring,"%u",&ultimoNumconta);
+
+        while(!feof(file))
+        {
+            fgets (mystring , 100 , file);
+            //tratar a mystring e passar os dados stringToCliente que devolve um apontador para cliente
+            clienteA = stringToCliente(mystring);
+
+            //adicionar este cliente a lista
+            clientesArray[i] = clienteA;
+
+            ++i;
+
+        }
+
+        for(k = i; k < MAX_NUM_CLIENTES;k++)
+            clientesArray[i] = NULL;
+
+	}
+	else {
+
+		result = false;
+
+	}
+
+    fclose(file);
+    return result;
+
+
+
 }
 
 //cria o ficheiro com a primeira linha como data hora programa operacao
