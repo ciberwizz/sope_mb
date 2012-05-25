@@ -18,7 +18,6 @@ unsigned int addCliente(char nome[20],char pin[4],arrCliente clienteArray){
     ultimoNumconta = ultimoNumconta + 1;
     int i = 0;
 
-    //um cliente para o sizeof cliente
     Cliente *novoCliente = (Cliente *) calloc(1,sizeof(Cliente));
 
     strcpy(novoCliente->nome,nome);
@@ -57,7 +56,6 @@ unsigned int removeCliente(unsigned int numconta,arrCliente clienteArray){
 
     if(numconta == 0)
     {
-        printf("Erro, esta a tentar remover o admin\n");
         return 0;
     }
 
@@ -112,7 +110,6 @@ ListaCliente * searchCliente(unsigned int numconta,ListaCliente* lista){
 
 }
 
-//transforma os dados do cliente numa string
 char * clienteToString(Cliente* cliente){
 
     char nconta[8];
@@ -147,9 +144,8 @@ Cliente * stringToCliente(char* str){
     double saldo;
 
 
-    sscanf (str,"%u %s %s %lf",&numconta,nome,pin,&saldo);//nome e pin ja sao o endereco do primeiro elemento por isso e sem '&'
+    sscanf (str,"%u %s %s %lf",&numconta,nome,pin,&saldo);
 
-    //adicionar os valores ontidos ao cliente e retornar
 
     strcpy(clienteA->nome,nome);
     clienteA->numconta = numconta;
@@ -207,58 +203,17 @@ int createArrayclient(arrCliente array){
     strcpy(clienteA->nome,"admin");
     strcpy(clienteA->pin,"1234");
 
-    //printf("hello1CriaArray\n");
     array[i] = clienteA;
-    //printf("hello2CriaArray\n");
 
     while(i++ < MAX_NUM_CLIENTES)
     {
         array[i] = NULL;
     }
 
-    //printf("UltimoNumconta: %d\n",ultimoNumconta);
     return ultimoNumconta;
 
 
 }
-
-/*
-bool levantarDinheiro(unsigned int numconta,char pinconta[4], double valor,ListaCliente* lista){
-    bool result = false;
-    bool resultLogin = false;
-    ListaCliente* lista1;
-    lista1 = searchCliente(numconta,lista);
-
-
-    if(lista1 == NULL)
-    {
-        printf("Erro ao levantar, cliente nao existe\n");
-        result = false;
-    }else
-    {
-        resultLogin = login(numconta,pinconta,&(lista1->cliente));
-        if(resultLogin == true)
-        {
-            if(lista1->cliente.saldo >= valor)
-            {
-                lista1->cliente.saldo = lista1->cliente.saldo - valor;
-                result = true;
-            }else
-            {
-                result = false;
-            }
-
-        }else
-        {
-            result = false;
-        }
-
-    }
-
-    return result;
-
-}
-*/
 
 bool levantarDinheiro(unsigned int numconta,char pinconta[4],double valor,arrCliente clientesArray){
     bool result = false;
@@ -304,38 +259,6 @@ bool levantarDinheiro(unsigned int numconta,char pinconta[4],double valor,arrCli
 
 }
 
-
-
-
-/*
-bool depositarDinheiro(unsigned int numconta,char pinconta[4],double valor,ListaCliente * lista){
-    bool result = false;
-    bool resultLogin = false;
-    ListaCliente* lista1;
-    lista1 = searchCliente(numconta,lista);
-
-    if(lista1 == NULL)
-    {
-        result = false;
-    }else
-    {
-        resultLogin = login(numconta,pinconta,&(lista1->cliente));
-        if(resultLogin == true)
-        {
-            lista1->cliente.saldo = lista1->cliente.saldo + valor;
-            result = true;
-        }else
-        {
-            result = false;
-        }
-
-    }
-
-    return result;
-
-}
-*/
-
 bool depositarDinheiro(unsigned int numconta,char pinconta[4],double valor,arrCliente clientesArray){
     bool result = false;
     bool resultLogin = false;
@@ -368,41 +291,6 @@ bool depositarDinheiro(unsigned int numconta,char pinconta[4],double valor,arrCl
 
 
 }
-
-
-/*
-bool transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numconta2,int valor,ListaCliente * lista){
-    bool resultLogin = false;
-    bool result = false;
-    ListaCliente * lista1;
-    ListaCliente * lista2;
-
-    lista1 = searchCliente(numconta,lista);
-    lista2 = searchCliente(numconta2,lista);
-
-
-
-    if(lista1 != NULL && lista2 != NULL)
-    {
-        resultLogin = login(numconta,pinconta,&(lista1->cliente));
-        if(resultLogin == true)
-        {
-            lista1->cliente.saldo = lista1->cliente.saldo - valor;
-            lista2->cliente.saldo = lista2->cliente.saldo + valor;
-            result = true;
-        }else
-        {
-            result = false;
-        }
-    }else
-    {
-        result = false;
-    }
-    return result;
-
-
-}
-*/
 
 bool transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numconta2,int valor,arrCliente clientesArray){
     int k;
@@ -449,32 +337,6 @@ bool transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numc
 
 }
 
-/*
-double consultarSaldo(unsigned int numconta,char pinconta[4],ListaCliente* lista){
-    double result;
-    ListaCliente * lista1;
-    bool resultLogin;
-
-    lista1 = searchCliente(numconta,lista);
-
-    if(lista1!= NULL)
-    {
-        resultLogin = login(numconta,pinconta,&(lista1->cliente));
-        if(resultLogin == true)
-        {
-            result = lista1->cliente.saldo;
-        }else
-        {
-            return -1.0;
-        }
-    }else
-    {
-        return -1.0;
-    }
-
-    return result;
-}
-*/
 
 double consultarSaldo(unsigned int numconta,char pinconta[4],arrCliente clientesArray){
     int k;
@@ -509,56 +371,6 @@ double consultarSaldo(unsigned int numconta,char pinconta[4],arrCliente clientes
 
 }
 
-/*
-bool escreveAcounts(ListaCliente *  lista){
-
-    ListaCliente * listaclient;
-    bool result = false;
-    FILE *file;
-    char str[128];
-
-	if ( (file = fopen ( "accounts.txt", "r" ) ) != NULL )
-	{
-
-        remove("accounts.txt");
-        file = fopen("accounts.txt", "w");
-
-	}
-	else {
-
-		file = fopen("accounts.txt", "w");
-	}
-
-
-    //escrever na primeira linha o numconta do ultimo jogador registado
-    fprintf(file,"%07u\n",ultimoNumconta);
-
-	while(lista != NULL)
-	{
-
-
-	    if(lista->next == NULL)
-	    {
-	        listaclient = listarClientes(lista,str);
-            fprintf(file,"%s",str);
-
-	        break;
-	    }
-
-        listaclient = listarClientes(lista,str);
-        fprintf(file,"%s\n",str);
-        lista = lista->next;
-	}
-
-    result = true;
-	fclose(file);
-	return result;
-
-
-
-}
-*/
-
 bool escreveAcounts(arrCliente clientesArray){
     int k;
     int i = 0;
@@ -580,7 +392,6 @@ bool escreveAcounts(arrCliente clientesArray){
 	}
 
 
-    //escrever na primeira linha o numconta do ultimo jogador registado
     fprintf(file,"%07u\n",ultimoNumconta);
 
     k = 0;
@@ -606,57 +417,6 @@ bool escreveAcounts(arrCliente clientesArray){
 
 }
 
-
-/*
-//ignora a primeira linha pois contem o numconta do ultimo jogador registado
-bool lerAcounts(ListaCliente * listaler){
-
-    char mystring [100];
-    bool result = true;
-    Cliente *  clienteA = (Cliente * ) malloc(sizeof(Cliente));
-    FILE *file;
-
-	if ( (file = fopen ( "accounts.txt", "r" ) ) != NULL )
-	{
-	    fgets (mystring , 100 , file);//para passar a primeira linha a frente
-	    sscanf(mystring,"%u",&ultimoNumconta);
-
-        while(!feof(file))
-        {
-            fgets (mystring , 100 , file);
-            //tratar a mystring e passar os dados stringToCliente que devolve um apontador para cliente
-            clienteA = stringToCliente(mystring);
-
-            //adicionar este cliente a lista
-            strcpy(listaler->cliente.nome,clienteA->nome);
-            listaler->cliente.numconta = clienteA->numconta;
-            strcpy(listaler->cliente.pin,clienteA->pin);
-            listaler->cliente.saldo = clienteA->saldo;
-
-            listaler->pid = 0;
-
-            listaler->next = (ListaCliente * ) malloc(sizeof(ListaCliente));
-            listaler->next->prev = listaler;
-            listaler = listaler->next;
-
-        }
-            //neste momento estou numa lista que nao tenha nada
-            listaler = listaler->prev;//voltar a ultima lista que tem alguma coisa nela guardada
-            free(listaler->next);//libertar a memoria usada pelo malloc
-            listaler->next = NULL;//dizer que a lista a seguir a ultima lista com um cliente e vazia
-	}
-	else {
-
-		result = false;
-
-	}
-
-    fclose(file);
-    return result;
-
-}
-*/
-
 bool lerAcounts(arrCliente clientesArray){
     int i = 0;
     int k;
@@ -667,16 +427,15 @@ bool lerAcounts(arrCliente clientesArray){
 
 	if ( (file = fopen ( "accounts.txt", "r" ) ) != NULL )
 	{
-	    fgets (mystring , 100 , file);//para passar a primeira linha a frente
+	    fgets (mystring , 100 , file);
 	    sscanf(mystring,"%u",&ultimoNumconta);
 
         while(!feof(file))
         {
             fgets (mystring , 100 , file);
-            //tratar a mystring e passar os dados stringToCliente que devolve um apontador para cliente
+
             clienteA = stringToCliente(mystring);
 
-            //adicionar este cliente a lista
             clientesArray[i] = clienteA;
 
             ++i;
@@ -701,7 +460,6 @@ bool lerAcounts(arrCliente clientesArray){
 
 }
 
-//cria o ficheiro com a primeira linha como data hora programa operacao
 bool iniciaLog(){
 
     bool result = false;
@@ -714,7 +472,7 @@ bool iniciaLog(){
 	}
 	else {
 
-		file = fopen("logfile.txt", "a+");//se nao existir cria e abre para escrita com modo append
+		file = fopen("logfile.txt", "a+");
 
 	}
 
@@ -742,95 +500,77 @@ bool actualizaLog(Request * request,Response * response){
     struct tm tm = *localtime(&t);
 
 
-    //se nao existir cria e abre para escrita com modo append
+
     iniciaLog();
 
     file = fopen("logfile.txt", "a+");
 
-    printf("response\n");
-
     if(response == NULL)
     {
-        printf("not null\n");
         if(request->user == ADMIN)
         {
-            printf("ADMIN\n");
             strcpy(programa,"ADMIN");
         }else
 
         if(request->user == CLIENTE)
         {
-            printf("CLIENTE\n");
             strcpy(programa,"CLIENTE");
         }else
 
         if(request->user == SERVER)
         {
-            printf("SERVER\n");
             strcpy(programa,"SERVER");
         }
 
         if(request->tipo == CONSULTAR)
         {
-            printf("CONSULTAR\n");
             strcpy(operacao,"CONSULTAR");
         }else
 
         if(request->tipo == LEVANTAR)
         {
-            printf("LEVANTAR\n");
             strcpy(operacao,"LEVANTAR");
         }else
 
         if(request->tipo == DEPOSITAR)
         {
-            printf("DEPOSITAR\n");
             strcpy(operacao,"DEPOSITAR");
         }else
 
         if(request->tipo == TRANSFERENCIA)
         {
-            printf("TRANSFERENCIA\n");
             strcpy(operacao,"TRANSFERENCIA");
         }else
 
         if(request->tipo == ADICIONAR)
         {
-            printf("ADICIONAR\n");
             strcpy(operacao,"ADICIONAR");
         }else
 
         if(request->tipo == REMOVER)
         {
-            printf("REMOVER\n");
             strcpy(operacao,"REMOVER");
         }else
 
          if(request->tipo == LISTAR)
         {
-            printf("LISTAR\n");
             strcpy(operacao,"LISTAR");
         }else
 
          if(request->tipo == INVALID)
         {
-            printf("INVALID\n");
             strcpy(operacao,"INVALID");
             result = false;
         }
 
         pid = request->pid_cli;
         fprintf(file,"   %02d-%02d-%02d     %02d:%02d:%02d   %s Cliente(pid=%d)  %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,programa,(int)pid,operacao);
-        //fprintf(file,"   DATA     HORA   PROGRAM pid=pid   OPERACAO\n");
         result = true;
     }else
 
     {
-        //se houver response
         if(strcmp(response->status,"ERRO") == 0)
         {
-            //se o status tiver a erro, manda para a mensagem "erro operacao"
-            printf("ERRO operacao\n");
             strcpy(mensagem,"ERRO operacao");
             pid = request->pid_cli;
             strcpy(programa,"SERVER");
@@ -839,8 +579,6 @@ bool actualizaLog(Request * request,Response * response){
             result = false;
         }else
         {
-            //se o status nao estiver a erro manda para a mensagem a msg
-            printf("Mensagem copiada\n");
             strcpy(mensagem,"OK");
             pid = request->pid_cli;
             strcpy(programa,"SERVER");
@@ -863,17 +601,6 @@ bool actualizaLog(Request * request,Response * response){
 
 
 }
-
-/*
-enum User getuser(){
-    return User;
-}
-void setuser(enum User user){
-    User = user;
-
-}
-*/
-
 
 void sigpipe_handler(int signo){
 	printf("SIGPIPE COUGHT\n");

@@ -96,11 +96,9 @@ struct ListaCliente{
 bool login(unsigned int numconta,char pin[4],Cliente * cliente);
 
 //retorna o numero da conta com que o cliente fica ou zero em erro
-//unsigned int addCliente(char nome[20],char pin[4],ListaCliente* lista/*,unsigned int ultimoNumconta*/);
 unsigned int addCliente(char nome[20],char pin[4],arrCliente clienteArray);
 
 //remove um cliente e retorna o numero da conta se ocorreu com sucesso, zero se ocorreu erro
-//unsigned int removeCliente(unsigned int numconta,ListaCliente* lista);
 unsigned int removeCliente(unsigned int numconta,arrCliente clienteArray);
 
 //transofrma os dados do cliente numa string
@@ -113,36 +111,27 @@ Cliente * stringToCliente(char* str);
 //retorna a lista onde um determinado cliente se encontra, else retorna null
 ListaCliente * searchCliente(unsigned int numconta,ListaCliente* lista);
 
-//listar todos os clientes e ir devolvendo strings obtidas pelos tostrings de cada cliente, a cada iteracao a listaCliente e actualizada
-//ListaCliente * listarClientes(ListaCliente * lista,char* str);
-arrCliente listarClientes(arrCliente arrayCliente,char* str,int * i);
 
-//criar lista e o admin com numconta = 0
-//int createListclient(ListaCliente *);
+arrCliente listarClientes(arrCliente arrayCliente,char* str,int * i);
 
 //criar arrayCliente com o admin com numconta = 0
 int createArrayclient(arrCliente array);
 
-//bool levantarDinheiro(unsigned int numconta,char pinconta[4],double valor,ListaCliente* lista);
 bool levantarDinheiro(unsigned int numconta,char pinconta[4],double valor,arrCliente clientesArray);
-//bool depositarDinheiro(unsigned int numconta,char pinconta[4],double valor,ListaCliente* lista);
+
 bool depositarDinheiro(unsigned int numconta,char pinconta[4],double valor,arrCliente clientesArray);
-//bool transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numconta2,int valor,ListaCliente* lista);
+
 bool transferirDinheiro(unsigned int numconta,char pinconta[4],unsigned int numconta2,int valor,arrCliente clientesArray);
 
-//double consultarSaldo(unsigned int numconta,char pinconta[4],ListaCliente* lista);
 double consultarSaldo(unsigned int numconta,char pinconta[4],arrCliente clientesArray);
 
-//bool escreveAcounts(ListaCliente *  lista);
 bool escreveAcounts(arrCliente clientesArray);
 
-//bool lerAcounts(ListaCliente * lista);
 bool lerAcounts(arrCliente clientesArray);
-bool iniciaLog();//cria o ficheiro com a primeira linha como data hora programa operacao
-bool actualizaLog(Request * request,Response * response);//abre o ficheiro e escreve em modo append ficheiro, e chamado detro de cada funcao como levantardinheiro, etc ...
-
-//enum User getuser();
-//void setuser(enum User user);
+//cria o ficheiro com a primeira linha como data hora programa operacao
+bool iniciaLog();
+//abre o ficheiro e escreve em modo append ficheiro, e chamado detro de cada funcao como levantardinheiro, etc ...
+bool actualizaLog(Request * request,Response * response);
 
 int createFifo(char*);
 char* readFifo(char*, int, char*);
