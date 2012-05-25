@@ -41,6 +41,7 @@ int main() {
 
 
     //printf("vai comecar a adicionar\n");
+    /*
     addCliente("nelson","1234",arrayclient);
     addCliente("Miguel","5678",arrayclient);
     addCliente("Da","1656",arrayclient);
@@ -58,122 +59,36 @@ int main() {
     addCliente("ABCD","1223",arrayclient);
     addCliente("dhf","2222",arrayclient);
     addCliente("aghf","2222",arrayclient);
-
+    */
     //printf("ja adicionou\n");
 
 
-    i = 0;
-    printf("listar clientes\n");
-    memset(str,0,128);
-    temp = listarClientes(arrayclient,str,&i);
+
+    //escrever no accouts.txt
 
 
-    while(temp != NULL)
-    {
-		printf("String :%s\n",str);
-
-		memset(str,0,128);
-        temp = listarClientes(temp,str,&i);
-    }
-
-    //removecliente
-
-    removeCliente(3,arrayclient);
-    puts("REMOVEU!!!");
-
-    i = 0;
-    printf("listar clientes\n");
-    memset(str,0,128);
-    temp2 = listarClientes(arrayclient,str,&i);
+    //escreveAcounts(arrayclient);
 
 
-    while(temp2 != NULL)
-    {
-		printf("i = %d; String : %s\n",i, str);
 
+
+    //ler do accouts.txt
+    if(lerAcounts(arrayclient)){
+        i = 0;
+        printf("listar clientes\n");
         memset(str,0,128);
-        temp2 = listarClientes(temp2,str,&i);
-    }
-
-    /*
-    inicio = &lista;
-    ini = &lista;
-    depositar = &lista;
-    levantar = &lista;
-    transferir = &lista;
-    verSaldo = &lista;
-    listaRemover = &lista;
-    listaEscrever = &lista;
-    listaler = &lista;
-    */
+        temp = listarClientes(arrayclient,str,&i);
 
 
+        while(temp != NULL)
+        {
+            printf("String :%s\n",str);
 
-    /*
-    //testar escrever accounts
+            memset(str,0,128);
+            temp = listarClientes(temp,str,&i);
+        }
 
-
-    printf("Escrever accounts\n");
-    resultEscrever = escreveAcounts(listaEscrever);
-    if(resultEscrever == false)
-        printf("Erro, nao escreveu accounts\n");
-    printf("Escreveu no accounts\n");
-
-
-    //testar ler accounts
-
-    printf("ler accounts\n");
-    resultLer = lerAcounts(listaler);
-
-    printf("primeiro nome: %s\n",listaler->cliente.nome);
-
-    if(resultLer == true)
-    {
-        printf("Leu correctamente\n");
-    }else
-    {
-        printf("Nao leu correctamente\n");
-    }
-
-    printf("listar clientes depois ler\n");
-    while(listaler != NULL)
-    {
-        listaler = listarClientes(listaler,str);
-        printf("String :%s\n",str);
-
-    }
-    */
-
-    //testar logs
-
-    /*
-    request = (Request *) malloc(sizeof(Request));
-    response = (Response *) malloc(sizeof(Response));
-
-    strcpy(request->nome,"nelson");
-    request->numConta = 1;
-    request->numConta2 = 2;
-    strcpy(request->pedidoOriginal,"Depositar dinheiro");
-    request->pid_cli = 12;
-    strcpy(request->pin,"1234");
-    strcpy(request->pin2,"5678");
-    request->valor = 100;
-    request->user = CLIENTE;
-    request->tipo = DEPOSITAR;
-    */
-
-
-    //strcpy(response->status,"OK");
-    //strcpy(response->respOriginal,"levantar dinheiro");
-    //strcpy(response->msg,"levantar");
-
-    /*
-    response = NULL;
-    //iniciaLog();
-    actualizaLog(request,response);
-    */
-
-
+    } puts("nao exist");
 
 
     return 0;

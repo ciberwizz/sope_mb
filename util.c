@@ -686,6 +686,7 @@ bool lerAcounts(arrCliente clientesArray){
         for(k = i; k < MAX_NUM_CLIENTES;k++)
             clientesArray[i] = NULL;
 
+        fclose(file);
 	}
 	else {
 
@@ -693,7 +694,7 @@ bool lerAcounts(arrCliente clientesArray){
 
 	}
 
-    fclose(file);
+
     return result;
 
 
